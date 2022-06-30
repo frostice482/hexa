@@ -1,0 +1,34 @@
+import Area from "./area.js";
+import cc from "./cc.js";
+import role from "./role.js";
+import chat from "./chat.js";
+import eventManager from './evmngr.js';
+import * as misc from './misc.js';
+import permission from "./permission.js";
+import plr from "./plr.js";
+import scoreboard from "./scoreboard.js";
+import * as sendChat from "./sendChat.js";
+import storage from "./storage.js";
+import server from "./server.js";
+import TypedValues from "./typedvalues.js";
+declare const SEModule: {
+    Area: typeof Area;
+    cc: typeof cc;
+    role: typeof role;
+    chat: typeof chat;
+    eventManager: typeof eventManager;
+    execCmd: (command: string, source?: import("mojang-minecraft").Dimension | "overworld" | "nether" | "end" | "o" | "n" | "e" | import("mojang-minecraft").Entity, ignoreError?: boolean) => {
+        [k: string]: any;
+        readonly statusCode: number;
+        readonly statusMessage: string;
+    };
+    misc: typeof misc;
+    permission: typeof permission;
+    plr: typeof plr;
+    scoreboard: typeof scoreboard;
+    sendChat: typeof sendChat;
+    storage: typeof storage;
+    server: typeof server;
+    TypedValues: typeof TypedValues;
+};
+export default SEModule;
