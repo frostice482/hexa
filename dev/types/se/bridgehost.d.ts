@@ -116,6 +116,7 @@ declare type pluginInfo = {
 declare type pluginConfig = {
     moduleEntry?: string;
     canBeUnloaded?: boolean;
+    executeOnRegister?: boolean;
 };
 declare type pluginJSONData = pluginInfo & pluginConfig & {
     id: string;

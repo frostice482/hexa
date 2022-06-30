@@ -11,5 +11,6 @@ export default class bridgeCli {
     internalModules: internalModulesList;
     moduleEntry?: string;
     canBeUnloaded?: boolean;
+    executeOnRegister?: boolean;
     readonly send: () => Promise<void>;
 }
