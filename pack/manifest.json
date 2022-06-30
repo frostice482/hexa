@@ -1,0 +1,35 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "§6§k||§r §eHexa §6§k||§r §7v0.0.1",
+        "description": "§6An Addon that provides protection against hackers. §eRequires Server Expansion.",
+        "uuid": "f26ce0c7-fe1d-46fe-a1f4-900e9021ebd6",
+        "version": [ 0, 0, 1 ],
+        "min_engine_version": [ 1, 18, 30 ]
+    },
+    "modules": [{
+        "type": "script",
+        "entry": "scripts/main.js",
+        "uuid": "692b6d0e-16a0-4c7f-ac5d-b796c50ebbd4",
+        "version": [ 0, 0, 1 ]
+    }],
+    "dependencies": [{
+        "uuid": "b26a4d4c-afdf-4690-88f8-931846312678",
+        "version": [0, 1, 0]
+    },{
+        "uuid": "6f4b6893-1bb6-42fd-b458-7fa3d0c89616",
+        "version": [0, 1, 0]
+    }, {
+        "uuid": "2bd50a27-ab5f-4f40-a596-3641627c635e",
+        "version": [0, 1, 0]
+    }],
+    "subpacks": [{
+        "name": "Status: §cDisabled",
+        "folder_name": "disabled",
+        "memory_tier": 0
+    }, {
+        "name": "Status: §aEnabled§r",
+        "folder_name": "enabled",
+        "memory_tier": 0
+    }]
+}
