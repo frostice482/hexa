@@ -2,7 +2,7 @@
     "format_version": 2,
     "header": {
         "name": "§6§k||§r §eHexa §6§k||§r §7v0.0.1",
-        "description": "§6An Addon that provides protection against hackers. §eRequires Server Expansion.",
+        "description": "§6An Addon that provides protection against hackers. \n§eRequires Server Expansion.",
         "uuid": "f26ce0c7-fe1d-46fe-a1f4-900e9021ebd6",
         "version": [ 0, 0, 1 ],
         "min_engine_version": [ 1, 18, 30 ]
@@ -22,6 +22,9 @@
     }, {
         "uuid": "2bd50a27-ab5f-4f40-a596-3641627c635e",
         "version": [0, 1, 0]
+    }, {
+        "uuid": "d5ede1b9-fe20-445f-b633-1bb69e0cd23e",
+        "version": [0, 0, 3]
     }],
     "subpacks": [{
         "name": "Status: §cDisabled",
