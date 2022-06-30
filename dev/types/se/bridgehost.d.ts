@@ -128,7 +128,8 @@ declare type pluginFamily = {
     commonLoaded: boolean;
     loadedVersion: number;
 };
-export declare type internalModulesList = Record<string, (bridge: typeof plugin.bridgeInstance.prototype) => any>;
+type pluginInstance = ( typeof plugin.bridgeInstance ) extends new(...args: any[]) => infer R ? R : any
+export declare type internalModulesList = Record<string, (bridge: pluginInstance) => any>;
 declare class commonImportData {
     constructor(id: string);
     readonly id: string;
