@@ -110,7 +110,6 @@ const aa = pli.internalModules['configs/itemban'] = async (b) => {
     }
 
     for (let itemBanStr in itemBansStr) {
-        console.warn(itemBanStr)
         let {id, data, action} = JSON.parse(itemBanStr)
         create(id, data, action, itemBanStr)
     }

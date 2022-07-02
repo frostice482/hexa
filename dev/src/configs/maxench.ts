@@ -310,4 +310,4 @@ const aa = pli.internalModules['configs/maxench'] = async (b) => {
     }
 }
 
-export type configs_maxench = ReturnType<typeof aa>
+export type config_maxench = ReturnType<typeof aa>
