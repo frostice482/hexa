@@ -94,8 +94,8 @@ const aa = pli.internalModules['configs/itemban'] = async (b) => {
         update: () => void
     }> = Object.create(null)
 
-    const create = (id: string, data: number[] | Record<number, ''>, action: typeof itemBans[string]['action']) => {
-        let itemBanStr: string
+    const create = (id: string, data: number[] | Record<number, ''>, action: typeof itemBans[string]['action'], string?: string) => {
+        let itemBanStr = string
         const itemBanData: typeof itemBans[string] = itemBans[id] = Object.setPrototypeOf({
             id,
             action,
@@ -112,7 +112,7 @@ const aa = pli.internalModules['configs/itemban'] = async (b) => {
     for (let itemBanStr in itemBansStr) {
         console.warn(itemBanStr)
         let {id, data, action} = JSON.parse(itemBanStr)
-        create(id, data, action)
+        create(id, data, action, itemBanStr)
     }
     
     return {
