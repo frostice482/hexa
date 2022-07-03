@@ -6,7 +6,7 @@ const pli = new bridgeCli('hexa', {
     author: ['FrostIce482'],
     version: 'v0.0.1',
     versionCode: 0.0001,
-    internalModules: {}
+    internalModules: Object.create(null)
 })
 
 export default pli
