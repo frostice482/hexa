@@ -31,7 +31,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
             if ( ccfg['ns:checkIllegalName'] && illegalNameRegex.test(plr.name) ) {
                 sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name}§r from server: §cNamespoof§r §7(Illegal name)§r`)
                 kick(plr, [])
-                addCancelList(plr, ctrl)
+                ctrl.break()
                 return true
             }
             return false
@@ -40,7 +40,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
             if ( ccfg['ns:checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
                 sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name.substring(0, ccfg['ns:maxNameLength'])}§r from server: §cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg['ns:maxNameLength']}§8)`)
                 kick(plr, [])
-                addCancelList(plr, ctrl)
+                ctrl.break()
                 return true
             }
             return false
@@ -49,16 +49,11 @@ pli.internalModules['checks/namespoof'] = async (b) => {
             if ( ccfg['ns:checkUID'] && plr.uid !== -1 && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
                 sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name}§r from server: §cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`)
                 kick(plr, [])
-                addCancelList(plr, ctrl)
+                ctrl.break()
                 return true
             }
             return false
         }
-    }
-
-    const addCancelList = (plr: Player, ctrl: eventControl) => {
-        cancelList.add(plr)
-        ctrl.break()
     }
 
     // test event listeners
@@ -66,8 +61,8 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
         
         tests.nameLength(plr, ctrl)
-        tests.illegalName(plr, ctrl)
-        tests.uid(plr, ctrl)
+        || tests.illegalName(plr, ctrl)
+        || tests.uid(plr, ctrl)
     }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
@@ -77,15 +72,6 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         tests.uid(plr, ctrl)
     }, 1000)
     if (!module.toggle) plr.ev.playerRegister.unsubscribe(ab)
-
-    const ac = server.ev.playerLoad.subscribe((plr, ctrl) => {
-        if (cancelList.has(plr)) {
-            cancelList.delete(plr)
-            ctrl.break()
-        }
-    }, 1000)
-
-    const cancelList = new WeakSet<Player>()
 
     // switch event listeners
     const ad = module.ev.enable.subscribe(() => {
@@ -100,7 +86,6 @@ pli.internalModules['checks/namespoof'] = async (b) => {
 
     const af = b.ev.unload.subscribe(() => {
         ae()
-        server.ev.playerLoad.subscribe(ac)
         module.ev.enable.unsubscribe(ad)
         module.ev.disable.unsubscribe(ae)
         b.ev.unload.subscribe(af)
