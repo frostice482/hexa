@@ -1,4 +1,4 @@
-import type { Player } from "mojang-minecraft";
+import { Player } from "mojang-minecraft";
 import type { eventControl } from "../../types/se/evmngr.js";
 import { config_common } from "../configs/common.js";
 import { config_id } from "../configs/id.js";
@@ -22,23 +22,39 @@ pli.internalModules['checks/namespoof'] = async (b) => {
 
     const tests: Record<string, (plr: Player, ctrl: eventControl) => boolean> = {
         nameLength: (plr, ctrl) => {
+            console.warn(
+                ccfg['ns:checkNameLength'],
+                plr.name.length,
+                ccfg['ns:maxNameLength']
+            )
             if ( ccfg['ns:checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
                 sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name.substring(0, ccfg['ns:maxNameLength'])}§r from server: §cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg['ns:maxNameLength']}§8)`)
                 kick(plr, [])
-                ctrl.break()
+                addCancelList(plr, ctrl)
                 return true
             }
             return false
         },
         uid: (plr, ctrl) => {
+            console.warn(
+                ccfg['ns:checkUID'],
+                plr.uid,
+                plr.name in icfg,
+                icfg[plr.name]
+            )
             if ( ccfg['ns:checkUID'] && plr.uid !== -1 && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
                 sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name}§r from server: §cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`)
                 kick(plr, [])
-                ctrl.break()
+                addCancelList(plr, ctrl)
                 return true
             }
             return false
         }
+    }
+
+    const addCancelList = (plr: Player, ctrl: eventControl) => {
+        cancelList.add(plr)
+        ctrl.break()
     }
 
     // test event listeners
@@ -47,32 +63,42 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         
         tests.nameLength(plr, ctrl)
         tests.uid(plr, ctrl)
-    }, 100)
+    }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
     const ab = plr.ev.playerRegister.subscribe((plr, ctrl) => {
         if (permission.getLevel(plr.getTags()) > 60) return
 
         tests.uid(plr, ctrl)
-    })
+    }, 1000)
     if (!module.toggle) plr.ev.playerRegister.unsubscribe(ab)
 
+    const ac = server.ev.playerLoad.subscribe((plr, ctrl) => {
+        if (cancelList.has(plr)) {
+            cancelList.delete(plr)
+            ctrl.break()
+        }
+    }, 1000)
+
+    const cancelList = new WeakSet<Player>()
+
     // switch event listeners
-    const ac = module.ev.enable.subscribe(() => {
+    const ad = module.ev.enable.subscribe(() => {
         server.ev.playerJoin.subscribe(aa)
         plr.ev.playerRegister.subscribe(ab)
     })
 
-    const ad = module.ev.disable.subscribe(() => {
+    const ae = module.ev.disable.subscribe(() => {
         server.ev.playerJoin.unsubscribe(aa)
         plr.ev.playerRegister.unsubscribe(ab)
     })
 
-    const ae = b.ev.unload.subscribe(() => {
-        ad()
-        module.ev.enable.unsubscribe(ac)
-        module.ev.disable.unsubscribe(ad)
-        b.ev.unload.subscribe(ae)
+    const af = b.ev.unload.subscribe(() => {
+        ae()
+        server.ev.playerLoad.subscribe(ac)
+        module.ev.enable.unsubscribe(ad)
+        module.ev.disable.unsubscribe(ae)
+        b.ev.unload.subscribe(af)
     })
 }
 
