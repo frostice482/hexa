@@ -65,8 +65,8 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
         if (permission.getLevel(plr.getTags()) > 60) return
         
-        tests.illegalName(plr, ctrl)
         tests.nameLength(plr, ctrl)
+        tests.illegalName(plr, ctrl)
         tests.uid(plr, ctrl)
     }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
