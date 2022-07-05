@@ -11,8 +11,8 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const icfg = await b.importInternal('configs/id') as Awaited<config_id>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
-    const Module = mlist['namespoof'] = await b.importInternal('libs/module') as Awaited<libs_module>
-    const module = new Module('namespoof', 'Namespoof', true)
+    const Module = await b.importInternal('libs/module') as Awaited<libs_module>
+    const module = mlist['namespoof'] = new Module('namespoof', 'Namespoof', true)
 
     ccfg['ns:checkUID'] ??= true
     ccfg['ns:checkNameLength'] ??= true
