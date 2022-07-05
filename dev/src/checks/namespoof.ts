@@ -19,7 +19,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     ccfg['ns:maxNameLength'] ??= 16
 
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if (permission.getLevel(plr.getTags()) <= 60) return
+        if (permission.getLevel(plr.getTags()) > 60) return
 
         // check player name length
         if ( ccfg['ns:checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
