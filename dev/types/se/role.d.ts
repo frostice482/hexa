@@ -3,14 +3,14 @@ declare const auth: unique symbol;
 export default class role {
     static get ev(): {
         format: {
-            subscribe: (callback: (eventData: formatEvd, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: formatEvd, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: formatEvd, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: formatEvd, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
     };
     static get events(): {
         format: {
-            subscribe: (callback: (eventData: formatEvd, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: formatEvd, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: formatEvd, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: formatEvd, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
     };
     static get group(): typeof roleGroup;

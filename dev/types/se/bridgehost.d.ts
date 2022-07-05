@@ -14,26 +14,8 @@ declare class plugin {
             "__#16@#pli": plugin;
             "__#16@#pliData": pluginImportData;
             "__#16@#data": moduleImportData;
-            readonly ev: {
-                ready: {
-                    subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-                    unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
-                };
-                unload: {
-                    subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-                    unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
-                };
-            };
-            readonly events: {
-                ready: {
-                    subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-                    unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
-                };
-                unload: {
-                    subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-                    unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
-                };
-            };
+            readonly ev: bridgeInstanceEventInstance['events'];
+            readonly events: bridgeInstanceEventInstance['events'];
             readonly import: <K extends string>(module: K, defaultVersion?: number | 'latest') => Promise<K extends "Minecraft" | "mc" | "Gametest" | "gt" | "MinecraftUI" | "mcui" | "SE" | "se" ? {
                 Minecraft: typeof mc;
                 mc: typeof mc;
@@ -57,7 +39,7 @@ declare class plugin {
                     plr: typeof import("./plr.js").default;
                     scoreboard: typeof import("./scoreboard.js").default;
                     sendChat: typeof import("./sendChat.js");
-                    storage: typeof import("./storage.js").default;
+                    storage: typeof import("./storage.js").storage;
                     server: typeof server;
                     TypedValues: typeof import("./typedvalues.js").default;
                 };
@@ -77,7 +59,7 @@ declare class plugin {
                     plr: typeof import("./plr.js").default;
                     scoreboard: typeof import("./scoreboard.js").default;
                     sendChat: typeof import("./sendChat.js");
-                    storage: typeof import("./storage.js").default;
+                    storage: typeof import("./storage.js").storage;
                     server: typeof server;
                     TypedValues: typeof import("./typedvalues.js").default;
                 };
@@ -103,8 +85,8 @@ declare class plugin {
     readonly dependents: Set<plugin>;
     get isExecuted(): boolean;
     readonly execute: (caller?: moduleImportData | null) => Promise<any>;
-    get canBeUnloaded(): boolean;
-    readonly unload: () => boolean;
+    get canBeUnloaded(): any;
+    readonly unload: (stack?: plugin[]) => boolean;
 }
 declare type pluginInfo = {
     name?: string;
@@ -129,8 +111,11 @@ declare type pluginFamily = {
     commonLoaded: boolean;
     loadedVersion: number;
 };
-type pluginInstance = ( typeof plugin.bridgeInstance ) extends new(...args: any[]) => infer R ? R : any
-export declare type internalModulesList = Record<string, (bridge: pluginInstance) => any>;
+declare type bridgeInstanceEvents = {
+    unload: void;
+};
+declare type bridgeInstanceEventInstance = eventManager<bridgeInstanceEvents>;
+export declare type internalModulesList = Record<string, (bridge: typeof plugin.bridgeInstance.prototype) => any>;
 declare class commonImportData {
     constructor(id: string);
     readonly id: string;

@@ -6,46 +6,46 @@ export default class server {
     static get vThread(): typeof vThread;
     static get ev(): {
         beforeChat: {
-            subscribe: (callback: (eventData: BeforeChatEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: BeforeChatEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: BeforeChatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: BeforeChatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
         playerJoin: {
-            subscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_2 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_2, priority?: number) => callback_2;
+            unsubscribe: <callback_3 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_3) => boolean;
         };
         playerLoad: {
-            subscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_4 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_4, priority?: number) => callback_4;
+            unsubscribe: <callback_5 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_5) => boolean;
         };
         initialize: {
-            subscribe: (callback: (eventData: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_6 extends (evd: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_6, priority?: number) => callback_6;
+            unsubscribe: <callback_7 extends (evd: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_7) => boolean;
         };
         postInitialize: {
-            subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_8 extends (evd: void, control: import("./evmngr.js").eventControl) => any>(callback: callback_8, priority?: number) => callback_8;
+            unsubscribe: <callback_9 extends (evd: void, control: import("./evmngr.js").eventControl) => any>(callback: callback_9) => boolean;
         };
     };
     static get events(): {
         beforeChat: {
-            subscribe: (callback: (eventData: BeforeChatEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: BeforeChatEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: BeforeChatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: BeforeChatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
         playerJoin: {
-            subscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_2 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_2, priority?: number) => callback_2;
+            unsubscribe: <callback_3 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_3) => boolean;
         };
         playerLoad: {
-            subscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: Player, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_4 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_4, priority?: number) => callback_4;
+            unsubscribe: <callback_5 extends (evd: Player, control: import("./evmngr.js").eventControl) => any>(callback: callback_5) => boolean;
         };
         initialize: {
-            subscribe: (callback: (eventData: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_6 extends (evd: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_6, priority?: number) => callback_6;
+            unsubscribe: <callback_7 extends (evd: WorldInitializeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_7) => boolean;
         };
         postInitialize: {
-            subscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: void, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_8 extends (evd: void, control: import("./evmngr.js").eventControl) => any>(callback: callback_8, priority?: number) => callback_8;
+            unsubscribe: <callback_9 extends (evd: void, control: import("./evmngr.js").eventControl) => any>(callback: callback_9) => boolean;
         };
     };
     static get ticker(): {

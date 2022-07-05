@@ -2,22 +2,22 @@ import { Player } from "mojang-minecraft";
 export default class chat {
     static get ev(): {
         nicknameChange: {
-            subscribe: (callback: (eventData: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
         chat: {
-            subscribe: (callback: (eventData: chatEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: chatEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_2 extends (evd: chatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_2, priority?: number) => callback_2;
+            unsubscribe: <callback_3 extends (evd: chatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_3) => boolean;
         };
     };
     static get events(): {
         nicknameChange: {
-            subscribe: (callback: (eventData: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback extends (evd: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback, priority?: number) => callback;
+            unsubscribe: <callback_1 extends (evd: nicknameChangeEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_1) => boolean;
         };
         chat: {
-            subscribe: (callback: (eventData: chatEvent, control: import("./evmngr.js").eventControl) => void, priority?: number) => void;
-            unsubscribe: (callback: (eventData: chatEvent, control: import("./evmngr.js").eventControl) => void) => boolean;
+            subscribe: <callback_2 extends (evd: chatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_2, priority?: number) => callback_2;
+            unsubscribe: <callback_3 extends (evd: chatEvent, control: import("./evmngr.js").eventControl) => any>(callback: callback_3) => boolean;
         };
     };
     static get group(): typeof chatGroup;

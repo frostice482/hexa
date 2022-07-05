@@ -22,7 +22,7 @@ export declare class TypedValue {
             specifics?: {
                 string?: string[];
                 number?: number[];
-                boolean?: ("false" | "true")[];
+                boolean?: ("true" | "false")[];
             };
             objects?: number[];
         };
@@ -66,7 +66,7 @@ export declare class TypedObject {
             specifics?: {
                 string?: string[];
                 number?: number[];
-                boolean?: ("false" | "true")[];
+                boolean?: ("true" | "false")[];
             };
             objects?: number[];
         };
@@ -106,7 +106,7 @@ export declare class TypedArray {
             specifics?: {
                 string?: string[];
                 number?: number[];
-                boolean?: ("false" | "true")[];
+                boolean?: ("true" | "false")[];
             };
             objects?: number[];
         };
@@ -148,7 +148,7 @@ export declare class TypedArraySpecific {
             specifics?: {
                 string?: string[];
                 number?: number[];
-                boolean?: ("false" | "true")[];
+                boolean?: ("true" | "false")[];
             };
             objects?: number[];
         };

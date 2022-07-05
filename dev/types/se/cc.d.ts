@@ -176,8 +176,8 @@ declare class parser {
     };
     static readonly playerSelector: ((selector: string) => {
         readonly execute: (source?: Player | Dimension) => Generator<Player, any, unknown>;
-        "__#14@#selector": string;
-        "__#14@#plrCache": Player;
+        "__#10314@#selector": string;
+        "__#10314@#plrCache": Player;
         readonly toString: () => string;
         readonly [Symbol.toPrimitive]: () => string;
     }) & {
