@@ -21,8 +21,8 @@ const aa = pli.internalModules['checks/namespoof'] = async (b) => {
         if (permission.getLevel(plr.getTags()) <= 60) return
 
         // check player name length
-        if ( ccfg['checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
-            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name.substring(ccfg['ns:maxNameLength'])}§r from server: §cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg['ns:maxNameLength']}§8)`)
+        if ( ccfg['ns:checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
+            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name.substring(0, ccfg['ns:maxNameLength'])}§r from server: §cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg['ns:maxNameLength']}§8)`)
             kick(plr, [])
             ctrl.break()
             return
