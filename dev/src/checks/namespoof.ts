@@ -63,7 +63,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
 
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if (permission.getLevel(plr.getTags()) > 60) return
+        if (permission.getLevel(plr.getTags()) >= 60) return
         
         tests.nameLength(plr, ctrl)
         tests.illegalName(plr, ctrl)
@@ -72,7 +72,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
     const ab = plr.ev.playerRegister.subscribe((plr, ctrl) => {
-        if (permission.getLevel(plr.getTags()) > 60) return
+        if (permission.getLevel(plr.getTags()) >= 60) return
 
         tests.uid(plr, ctrl)
     }, 1000)
