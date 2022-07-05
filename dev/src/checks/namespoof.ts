@@ -13,8 +13,8 @@ const aa = pli.internalModules['checks/namespoof'] = async (b) => {
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('Namespoof', 'namespoof', true)
 
-    ccfg['ns:checkUID'] ??= 1
-    ccfg['ns:checkNameLength'] ??= 1
+    ccfg['ns:checkUID'] ??= true
+    ccfg['ns:checkNameLength'] ??= true
     ccfg['ns:maxNameLength'] ??= 16
 
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
