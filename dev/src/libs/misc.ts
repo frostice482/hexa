@@ -13,9 +13,11 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
                 yield plr
     }
 
+    ccfg['kick:useKickCommand'] ??= 1
+
     const kick = (plr: Player, messsage: string | string[]) => {
         try {
-            if (!( ccfg['kick:useKickCommand'] ??= 1 )) throw 0
+            if (!ccfg['kick:useKickCommand']) throw 0
             execCmd(`kick ${JSON.stringify(plr.name)} ${ Array.isArray(messsage) ? messsage.join('\n\u00a7r') : messsage }`)
         } catch {
             plr.triggerEvent('se:kick')
