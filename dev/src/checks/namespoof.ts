@@ -15,11 +15,22 @@ const aa = pli.internalModules['checks/namespoof'] = async (b) => {
 
     ccfg['ns:checkUID'] ??= 1
     ccfg['ns:checkNameLength'] ??= 1
-    ccfg['ns:maxNameLength'] ??= 80
+    ccfg['ns:maxNameLength'] ??= 16
 
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if ( ccfg['ns:checkUID'] && plr.name in icfg && icfg[plr.name] !== plr.uid && permission.getLevel(plr.getTags()) <= 60 ) {
-            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name}§r from server: §cNamespoof§r §7(UID mismatch)§r §8(Player UID: §2${plr.uid}§8, listed UID: §2${icfg[plr.name]}§8)`)
+        if (permission.getLevel(plr.getTags()) <= 60) return
+
+        // check player name length
+        if ( ccfg['checkNameLength'] && plr.name.length > ccfg['ns:maxNameLength'] ) {
+            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name.substring(ccfg['ns:maxNameLength'])}§r from server: §cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg['ns:maxNameLength']}§8)`)
+            kick(plr, [])
+            ctrl.break()
+            return
+        }
+
+        // check player uid
+        if ( ccfg['ns:checkUID'] && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
+            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r Kicked §b${plr.name}§r from server: §cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`)
             kick(plr, [])
             ctrl.break()
             return
