@@ -88,6 +88,7 @@ declare class plugin {
     get canBeUnloaded(): any;
     readonly unload: (stack?: plugin[]) => boolean;
 }
+export type bridgeInstance = (typeof plugin.bridgeInstance) extends new(...args: any[]) => infer R ? R : any
 declare type pluginInfo = {
     name?: string;
     description?: string;
@@ -115,7 +116,7 @@ declare type bridgeInstanceEvents = {
     unload: void;
 };
 declare type bridgeInstanceEventInstance = eventManager<bridgeInstanceEvents>;
-export declare type internalModulesList = Record<string, (bridge: typeof plugin.bridgeInstance.prototype) => any>;
+export declare type internalModulesList = Record<string, (bridge: bridgeInstance) => any>;
 declare class commonImportData {
     constructor(id: string);
     readonly id: string;
