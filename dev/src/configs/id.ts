@@ -8,12 +8,24 @@ const aa = pli.internalModules['configs/id'] = async (b) => {
 
     const cfg = config.nocache(scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies)
 
-    plr.ev.playerRegister.subscribe(({name, uid}) => {
+    // test for player register
+    const aa = plr.ev.playerRegister.subscribe(({name, uid}) => {
         cfg[name] = uid
     })
-    server.ev.playerJoin.subscribe(({name, uid}) => {
+    const ab = b.ev.unload.subscribe(() => {
+        plr.ev.playerRegister.unsubscribe(aa)
+        b.ev.unload.unsubscribe(ab)
+    })
+
+    // test for player join
+    const ac = server.ev.playerJoin.subscribe(({name, uid}) => {
         if (uid !== -1 && !( name in cfg )) cfg[name] = uid
     })
+    const ad = b.ev.unload.subscribe(() => {
+        server.ev.playerJoin.unsubscribe(ac)
+        b.ev.unload.unsubscribe(ad)
+    })
+
     for (const {name, uid} of world.getPlayers()) cfg[name] = uid
 
     return cfg
