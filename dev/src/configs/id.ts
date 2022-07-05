@@ -2,8 +2,8 @@ import { libs_config } from "../libs/config.js";
 import pli from "../pli.js";
 
 const aa = pli.internalModules['configs/id'] = async (b) => {
-    const { scoreboard, storage, plr, server } = await b.import('se')
     const { world } = await b.import('mc')
+    const { scoreboard, storage, plr, server } = await b.import('se')
     const config = await b.importInternal('libs/config') as libs_config
 
     const cfg = config.nocache(scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies)

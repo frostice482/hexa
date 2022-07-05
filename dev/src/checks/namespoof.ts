@@ -4,14 +4,15 @@ import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
-const aa = pli.internalModules['checks/namespoof'] = async (b) => {
+pli.internalModules['checks/namespoof'] = async (b) => {
     const { permission, plr, server, sendChat: { sendMsgToPlayers } } = await b.import('se')
+    const mlist = await b.importInternal('checks/list') as Awaited<config_common>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
     const icfg = await b.importInternal('configs/id') as Awaited<config_id>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
-    const Module = await b.importInternal('libs/module') as Awaited<libs_module>
-    const module = new Module('Namespoof', 'namespoof', true)
+    const Module = mlist['namespoof'] = await b.importInternal('libs/module') as Awaited<libs_module>
+    const module = new Module('namespoof', 'Namespoof', true)
 
     ccfg['ns:checkUID'] ??= true
     ccfg['ns:checkNameLength'] ??= true
@@ -53,3 +54,5 @@ const aa = pli.internalModules['checks/namespoof'] = async (b) => {
         b.ev.unload.subscribe(ad)
     })
 }
+
+
