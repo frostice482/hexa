@@ -81,8 +81,8 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         
         tests.nameLength(plr, ctrl)
         || tests.illegalName(plr, ctrl)
-        || tests.uid(plr, ctrl)
         || tests.rename(plr, ctrl)
+        || tests.uid(plr, ctrl)
     }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
