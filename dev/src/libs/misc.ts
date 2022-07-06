@@ -43,7 +43,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             aa = `from${ type != 'kick' ? ' playing in ' : ' ' }this server${ type == 'ban' ? ` for §a${convertToReadableTime(banDuration, false)}§r` : '' }`
         
         if (announceLevel != 'none') {
-            const announceMessageConvert = announceMessage || `§6[§eHEXA§6]§r §b${modName}§r ${kickType} §b${plr.nickname}§r ${aa}: ${reason}`
+            const announceMessageConvert = announceMessage || `§6[§eHEXA§6]§r §b${modName}§r ${kickType} §b${plr.name}§r ${aa}: ${reason}`
             if (announceLevel == 'admin') sendMsgToPlayers(getAdmins(), announceMessageConvert)
             else sendMsg('@a', announceMessageConvert)
         }
