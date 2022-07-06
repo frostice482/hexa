@@ -14,7 +14,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
     const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
-    const icfg = await b.importInternal('configs/id') as Awaited<config_id>
+    const { uidOfName: icfg, nameOfUid: icfg2 } = await b.importInternal('configs/id') as Awaited<config_id>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>

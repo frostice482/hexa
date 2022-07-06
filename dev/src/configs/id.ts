@@ -6,7 +6,25 @@ const aa = pli.internalModules['configs/id'] = async (b) => {
     const { scoreboard, storage, plr, server } = await b.import('se')
     const config = await b.importInternal('libs/config') as libs_config
 
-    const cfg = config.nocache(scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies)
+    const cfg = new Proxy(
+        config( scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies ), {
+            set: (t, p, v) => {
+                if (typeof p == 'symbol') return true
+                delete cfg2[t[p]]
+                cfg2[t[p] = +v] = p
+                return true
+            },
+            deleteProperty: (t, p) => {
+                if (typeof p == 'symbol') return true
+                delete cfg2[t[p]]
+                delete t[p]
+                return true
+            }
+        }
+    )
+
+    const cfg2: Record<number, string> = Object.create(null)
+    for (const k in cfg) cfg2[cfg[k]] = k
 
     // test for player register
     const aa = plr.ev.playerRegister.subscribe(({name, uid}) => {
@@ -28,7 +46,10 @@ const aa = pli.internalModules['configs/id'] = async (b) => {
 
     for (const {name, uid} of world.getPlayers()) cfg[name] = uid
 
-    return cfg
+    return {
+        uidOfName: cfg,
+        nameOfUid: cfg2,
+    }
 }
 
 export type config_id = ReturnType<typeof aa>
