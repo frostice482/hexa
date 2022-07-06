@@ -67,7 +67,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
             return false
         },
         uid: (plr, ctrl) => {
-            if ( ccfg['ns:checkUID'] && plr.uid !== -1 && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
+            if ( ccfg['ns:checkUID'] && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
                 begone(plr, ctrl, `§cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`)
                 return true
             }
@@ -86,23 +86,13 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
-    const ab = plr.ev.playerRegister.subscribe((plr, ctrl) => {
-        if (permission.getLevel(plr.getTags()) >= 60) return
-
-        tests.uid(plr, ctrl)
-        || tests.rename(plr, ctrl)
-    }, 1000)
-    if (!module.toggle) plr.ev.playerRegister.unsubscribe(ab)
-
     // switch event listeners
     const ad = module.ev.enable.subscribe(() => {
         server.ev.playerJoin.subscribe(aa)
-        plr.ev.playerRegister.subscribe(ab)
     })
 
     const ae = module.ev.disable.subscribe(() => {
         server.ev.playerJoin.unsubscribe(aa)
-        plr.ev.playerRegister.unsubscribe(ab)
     })
 
     const af = b.ev.unload.subscribe(() => {

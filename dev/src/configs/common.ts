@@ -5,11 +5,16 @@ const aa = pli.internalModules['configs/common'] = async (b) => {
 
     const saveData = new storage.instance<{save: any}>(`HX:CM:${storage.instance.default.uniqueID.slice(0, 10)}`)
     saveData.autosaveInterval = 0
-    const p = new Promise<any>((res, rej) => {
-        if (!saveData.saveInfo.value) return res(Object.create(null))
+    const obj = await new Promise<any>((res, rej) => {
+        console.warn('data exist:' + saveData.saveInfo.value)
+        if (!saveData.saveInfo.value) {
+            saveData.autosaveInterval = 30000
+            return res(Object.create(null))
+        }
         const cb = saveData.ev.load.subscribe((data) => {
             try {
                 saveData.ev.load.unsubscribe(cb)
+                console.warn(`data: ${JSON.stringify(data.save)}`)
                 res( Object.setPrototypeOf(data.save ?? {}, null) )
                 saveData.autosaveInterval = 30000
             } catch (e) {
@@ -17,7 +22,6 @@ const aa = pli.internalModules['configs/common'] = async (b) => {
             }
         })
     })
-    const obj = await p
     saveData.ev.save.subscribe((data) => data.save = obj)
 
     return obj

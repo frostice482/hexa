@@ -38,7 +38,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             : Array.isArray(messsage) ? { useTemplate: false, reason: messsage.join('\n§r') }
             : messsage
 
-        const kickType = type == 'blacklist' ? '§4blacklisted§r' : type == 'ban' ? '§cbanned§r' : '§ckicked§r', 
+        const kickType = type == 'blacklist' ? '§4blacklisted§r' : type == 'ban' ? '§cbanned§r' : '§ekicked§r', 
             modName = typeof moderator == 'string' ? moderator : moderator.name,
             aa = `from${ type != 'kick' ? ' playing in ' : ' ' }this server${ type == 'ban' ? ` for §a${convertToReadableTime(banDuration, false)}§r` : '' }`
         
