@@ -26,6 +26,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     ccfg['ns:checkNameLength'] ??= true
     ccfg['ns:maxNameLength'] ??= 16
     ccfg['ns:checkIllegalName'] ??= true
+    ccfg['ns:checkRename'] ??= true
     let illegalNameRegex = parseRegex(ccfg['ns:illegalNameRegex'] ??= '/["\\\\]/')
     Object.defineProperty(ccfg, 'ns:illegalNameRegex', {
         get: () => String(illegalNameRegex),
@@ -44,6 +45,13 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     }
 
     const tests: Record<string, (plr: Player, ctrl: eventControl) => boolean> = {
+        rename: (plr, ctrl) => {
+            if ( ccfg['ns:checkRename'] && plr.uid !== -1 && icfg2[plr.uid] !== plr.name ) {
+                begone(plr, ctrl, `§cNamespoof§r §7(Renamed)§r §8(player UID: §2${plr.uid}§8, known as: §2${icfg2[plr.uid]}§8)`)
+                return true
+            }
+            return false
+        },
         illegalName: (plr, ctrl) => {
             if ( ccfg['ns:checkIllegalName'] && illegalNameRegex.test(plr.name) ) {
                 begone(plr, ctrl, `§cNamespoof§r §7(Illegal name)§r`)
@@ -74,6 +82,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         tests.nameLength(plr, ctrl)
         || tests.illegalName(plr, ctrl)
         || tests.uid(plr, ctrl)
+        || tests.rename(plr, ctrl)
     }, 1000)
     if (!module.toggle) server.ev.playerJoin.unsubscribe(aa)
 
@@ -81,6 +90,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
 
         tests.uid(plr, ctrl)
+        || tests.rename(plr, ctrl)
     }, 1000)
     if (!module.toggle) plr.ev.playerRegister.unsubscribe(ab)
 
