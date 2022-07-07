@@ -2,7 +2,7 @@ import pli from "../pli.js";
 
 export type itemBanData = {
     data: Record<number, ''>
-    action: 'clear' | 'warn' | 'kick' | 'ban'
+    action: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
 }
 
 export type itemBanList = Record<string, itemBanData>
