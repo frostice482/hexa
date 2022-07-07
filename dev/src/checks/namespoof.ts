@@ -9,7 +9,7 @@ import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
 pli.internalModules['checks/namespoof'] = async (b) => {
-    const { permission, plr, server, sendChat: { sendMsgToPlayers }, misc: { parseRegex } } = await b.import('se')
+    const { permission, server, misc: { parseRegex } } = await b.import('se')
     const mlist = await b.importInternal('checks/list') as Awaited<config_common>
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
     const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
