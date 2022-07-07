@@ -22,6 +22,11 @@ const aa = pli.internalModules['configs/common'] = async (b) => {
     })
     saveData.ev.save.subscribe((data) => data.save = obj)
 
+    const aa = b.ev.unload.subscribe(() => {
+        saveData.autosaveInterval = 0
+        b.ev.unload.unsubscribe(aa)
+    })
+
     return obj
 }
 
