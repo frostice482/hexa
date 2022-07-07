@@ -91,7 +91,8 @@ const aa = pli.internalModules['configs/itemban'] = async (b) => {
                     "minecraft:item.iron_door": { "data": { "-1": "" }, "action": "ban" },
                     "minecraft:movingBlock": { "data": { "-1": "" }, "action": "ban" },
                     "minecraft:beehive": { "data": { "-1": "" }, "action": "warn" },
-                    "minecraft:beenest": { "data": { "-1": "" }, "action": "warn" }
+                    "minecraft:bee_nest": { "data": { "-1": "" }, "action": "warn" },
+                    "minecraft:mob_spawner": { "data": { "-1": "" }, "action": "warn" }
                 }, null)
             )
         }
