@@ -1,11 +1,38 @@
 import pli from "../pli.js";
 
+export type commonSaveData = {
+    kick: {
+        useKickCommand: boolean
+    }
+    namespoof: {
+        actionType: 'kick' | 'ban' | 'blacklist'
+        banDuration: number
+        checkUID: boolean
+        checkNameLength: boolean
+        maxNameLength: number
+        checkIllegalName: boolean
+        checkRename: boolean
+        illegalNameRegex: string
+    }
+    illegalItem: {
+        checkInterval: number
+        checkDroppedItem: boolean
+        checkItemBan: boolean
+        checkStack: boolean
+        defaultStackSize: number
+        stackActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        checkEnch: boolean
+        enchActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        banDuration: number
+    }
+}
+
 const aa = pli.internalModules['configs/common'] = async (b) => {
     const { storage } = await b.import('se')
 
-    const saveData = new storage.instance<{save: any}>(`HX:CM:${storage.instance.default.uniqueID.slice(0, 10)}`)
+    const saveData = new storage.instance<{save: commonSaveData}>(`HX:CM:${storage.instance.default.uniqueID.slice(0, 10)}`)
     saveData.autosaveInterval = 0
-    const obj = await new Promise<any>((res, rej) => {
+    const obj = await new Promise<commonSaveData>((res, rej) => {
         if (!saveData.saveInfo.value) {
             saveData.autosaveInterval = 30000
             return res(Object.create(null))

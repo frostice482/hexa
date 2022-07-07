@@ -23,22 +23,24 @@ pli.internalModules['checks/item'] = async (b) => {
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('illegalitem', 'IllegalItem', true)
 
-    ccfg['ii:checkInterval'] ??= 1
-    ccfg['ii:checkDroppedItem'] ??= true
-    ccfg['ii:checkItemBan'] ??= true
-    ccfg['ii:checkStack'] ??= true
-    ccfg['ii:defaultStackSize'] ??= 64
-    ccfg['ii:stackActionType'] ??= 'ban' // warn | kick | ban | blacklist
-    ccfg['ii:checkEnch'] ??= true
-    ccfg['ii:enchActionType'] ??= 'ban' // warn | kick | ban | blacklist
-    ccfg['ii:banDuration'] ??= 31449600 // ban duration
+    ccfg.illegalItem ??= {
+        checkInterval: 1,
+        checkDroppedItem: true,
+        checkItemBan: true,
+        checkStack: true,
+        defaultStackSize: 64,
+        stackActionType: 'ban',
+        checkEnch: true,
+        enchActionType: 'ban',
+        banDuration: 31449600
+    }
 
     const enchList = Object.keys(MinecraftEnchantmentTypes)
     const air = new ItemStack(MinecraftItemTypes.air, 0)
 
     const scanItem = (plr: Player, index: number, i: ItemStack, c: BlockInventoryComponentContainer | InventoryComponentContainer = plr.getComponent('inventory').container): 0 | 1 | 2 => {
         // check item ban
-        if ( ccfg['ii:checkItemBan'] && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
+        if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             c.setItem(index, air)
             const info = `§cBanned item§r §8(Item: §2${i.id}§8, data: §2${i.data}§8)`
             switch (ibcfg[i.id].action) {
@@ -54,10 +56,10 @@ pli.internalModules['checks/item'] = async (b) => {
                 }; break
 
                 case 'ban': {
-                    bancfg[plr.uid] = Date.now() + ccfg['ii:banDuration'] * 1000
+                    bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: ccfg['ii:banDuration'],
+                        banDuration: ccfg.illegalItem.banDuration,
                         reason: info
                     })
                     return 2
@@ -76,10 +78,10 @@ pli.internalModules['checks/item'] = async (b) => {
         }
 
         // check stack
-        if ( ccfg['ii:checkStack'] && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg['ii:defaultStackSize'] ) ) ) {
+        if ( ccfg.illegalItem.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize ) ) ) {
             c.setItem(index, air)
-            const info = `§cIllegal stack size§r §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg['ii:defaultStackSize']}§8)`
-            switch (ccfg['ii:stackActionType']) {
+            const info = `§cIllegal stack size§r §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`
+            switch (ccfg.illegalItem.stackActionType) {
                 // case 'clear': {}; break
 
                 case 'warn': {
@@ -92,10 +94,10 @@ pli.internalModules['checks/item'] = async (b) => {
                 }; break
 
                 case 'ban': {
-                    bancfg[plr.uid] = Date.now() + ccfg['ii:banDuration'] * 1000
+                    bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: ccfg['ii:banDuration'],
+                        banDuration: ccfg.illegalItem.banDuration,
                         reason: info
                     })
                     return 2
@@ -114,7 +116,7 @@ pli.internalModules['checks/item'] = async (b) => {
         }
 
         // check enchantment
-        if ( ccfg['ii:checkEnch'] ) {
+        if ( ccfg.illegalItem.checkEnch ) {
             const e = i.getComponent('enchantments').enchantments
             const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]
             for (const enchId of enchList) {
@@ -123,7 +125,7 @@ pli.internalModules['checks/item'] = async (b) => {
                 if ( curLevel < 0 || curLevel > maxLevel) {
                     c.setItem(index, air)
                     const info = `§cIllegal enchantment§r §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`
-                    switch (ccfg['ii:enchActionType']) {
+                    switch (ccfg.illegalItem.enchActionType) {
                         // case 'clear': {}; break
 
                         case 'warn': {
@@ -136,10 +138,10 @@ pli.internalModules['checks/item'] = async (b) => {
                         }; break
 
                         case 'ban': {
-                            bancfg[plr.uid] = Date.now() + ccfg['ii:banDuration'] * 1000
+                            bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
                             kick(plr, {
                                 type: 'ban',
-                                banDuration: ccfg['ii:banDuration'],
+                                banDuration: ccfg.illegalItem.banDuration,
                                 reason: info
                             })
                             return 2
@@ -171,7 +173,7 @@ pli.internalModules['checks/item'] = async (b) => {
     }
 
     const aa = world.events.tick.subscribe(({currentTick}) => {
-        if (currentTick % ccfg['ii:checkInterval'] !== 0) return
+        if (currentTick % ccfg.illegalItem.checkInterval !== 0) return
 
         for (const plr of world.getPlayers()) {
             if (permission.getLevel(plr.getTags()) >= 60) continue
@@ -189,7 +191,7 @@ pli.internalModules['checks/item'] = async (b) => {
     if (!module.toggle) world.events.beforeItemUse.unsubscribe(ab)
 
     const ac = world.events.entityCreate.subscribe(({entity}) => {
-        if (!( ccfg['ii:checkDroppedItem'] && entity.hasComponent('item'))) return
+        if (!( ccfg.illegalItem.checkDroppedItem && entity.hasComponent('item'))) return
 
         const i = entity.getComponent('item').itemStack
         const closestPlrName = execCmd('testfor @p', entity, true).victim?.[0],
@@ -198,7 +200,7 @@ pli.internalModules['checks/item'] = async (b) => {
         const dropInfo = `has been dropped at ${Area.toLocationArray(entity.location).map(v => `§a${v}§r`).join(', ')} (§a${entity.dimension.id}§r)!`,
             closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
 
-        if ( ccfg['ii:checkItemBan'] && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
+        if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             sendMsgToPlayers(getAdmins(), [
                 `§6[§eHEXA§6]§r A §cbanned item§r ${dropInfo} §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
                 closestPlrInfo
@@ -207,16 +209,16 @@ pli.internalModules['checks/item'] = async (b) => {
             return
         }
 
-        if ( ccfg['ii:checkStack'] && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg['ii:defaultStackSize'] ) ) ) {
+        if ( ccfg.illegalItem.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize ) ) ) {
             sendMsgToPlayers(getAdmins(), [
-                `§6[§eHEXA§6]§r An §cillegal stack size§r ${dropInfo} §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg['ii:defaultStackSize']}§8)`,
+                `§6[§eHEXA§6]§r An §cillegal stack size§r ${dropInfo} §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`,
                 closestPlrInfo
             ])
             entity.kill()
             return
         }
 
-        if ( ccfg['ii:checkEnch'] ) {
+        if ( ccfg.illegalItem.checkEnch ) {
             try {
                 const e = i.getComponent('enchantments').enchantments
                 const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]

@@ -23,7 +23,9 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
                 yield plr
     }
 
-    ccfg['kick:useKickCommand'] ??= 1
+    ccfg.kick ??= {
+        useKickCommand: true
+    }
 
     const kick = (plr: Player, messsage: string | string[] | kickConfig) => {
         const {
@@ -49,7 +51,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         }
         
         try {
-            if (!ccfg['kick:useKickCommand']) throw 0
+            if (!ccfg.kick.useKickCommand) throw 0
             execCmd(`kick ${JSON.stringify(plr.name)} ${ useTemplate ? [ `You have been ${kickType} ${aa}.`, `Moderator: §b${modName}`, `Reason: ${reason}` ].join('\n§r') : reason} `)
         } catch {
             plr.triggerEvent('se:kick')
