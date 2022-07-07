@@ -1,4 +1,3 @@
-import { config_common } from "../configs/common.js";
 import { config_whitelist } from "../configs/whitelist.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
@@ -7,11 +6,10 @@ import pli from "../pli.js";
 pli.internalModules['checks/whitelist'] = async (b) => {
     const { server, permission } = await b.import('se')
     const whitecfg = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
-    const mlist = await b.importInternal('checks/list') as Awaited<config_common>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
-    const module = mlist['whitelist'] = new Module('whitelist', 'Whitelist', false)
+    const module = new Module('whitelist', 'Whitelist', false)
 
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {

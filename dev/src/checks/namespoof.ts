@@ -4,13 +4,12 @@ import { config_banlist } from "../configs/banlist.js";
 import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { config_id } from "../configs/id.js";
-import { kickConfig, libs_misc } from "../libs/misc.js";
+import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
 pli.internalModules['checks/namespoof'] = async (b) => {
     const { permission, plr, server, misc: { parseRegex } } = await b.import('se')
-    const mlist = await b.importInternal('checks/list') as Awaited<config_common>
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
     const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
@@ -18,7 +17,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
-    const module = mlist['namespoof'] = new Module('namespoof', 'Namespoof', true)
+    const module = new Module('namespoof', 'Namespoof', true)
 
     ccfg['ns:actionType'] ??= 'ban' // kick | ban | blacklist
     ccfg['ns:banDuration'] ??= 31449600 // ban duration

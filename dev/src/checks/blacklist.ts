@@ -1,5 +1,4 @@
 import { config_blacklist } from "../configs/blacklist.js";
-import { config_common } from "../configs/common.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
@@ -7,11 +6,10 @@ import pli from "../pli.js";
 pli.internalModules['checks/blacklist'] = async (b) => {
     const { server, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
     const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
-    const mlist = await b.importInternal('checks/list') as Awaited<config_common>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
-    const module = mlist['blacklist'] = new Module('blacklist', 'Blacklist', true)
+    const module = new Module('blacklist', 'Blacklist', true)
 
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
