@@ -31,6 +31,7 @@ const aa = pli.internalModules['libs/module'] = async (b) => {
                 set: (v) => ( v ? this.enable : this.disable )()
             })
 
+            moduleList.set(id, this)
             triggerEvent.register(this)
         }
 
