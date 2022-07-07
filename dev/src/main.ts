@@ -16,3 +16,5 @@ pli.internalModules['main'] = async (b) => {
 }
 
 pli.send()
+
+import './test.js'
