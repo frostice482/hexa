@@ -22,6 +22,9 @@ export type commonSaveData = {
         defaultStackSize: number
         stackActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
         checkEnch: boolean
+        checkContainerOnPlace: boolean
+        nonEmptyContainerOnPlaceActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        renewOnPlace: boolean
         enchActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
         banDuration: number
     }

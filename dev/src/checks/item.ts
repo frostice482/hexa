@@ -5,6 +5,7 @@ import { config_common } from "../configs/common.js";
 import { config_itemban } from "../configs/itemban.js";
 import { config_maxench } from "../configs/maxench.js";
 import { config_maxstack } from "../configs/maxstack.js";
+import { config_renewable } from "../configs/renewable.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
@@ -17,6 +18,7 @@ pli.internalModules['checks/item'] = async (b) => {
     const ibcfg = await b.importInternal('configs/itemban') as Awaited<config_itemban>
     const mecfg = await b.importInternal('configs/maxench') as Awaited<config_maxench>
     const mscfg = await b.importInternal('configs/maxstack') as Awaited<config_maxstack>
+    const rcfg = await b.importInternal('configs/renewable') as Awaited<config_renewable>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
@@ -32,6 +34,9 @@ pli.internalModules['checks/item'] = async (b) => {
         stackActionType: 'ban',
         checkEnch: true,
         enchActionType: 'ban',
+        checkContainerOnPlace: true,
+        nonEmptyContainerOnPlaceActionType: 'kick',
+        renewOnPlace: true,
         banDuration: 31449600
     }
 
@@ -241,17 +246,75 @@ pli.internalModules['checks/item'] = async (b) => {
     })
     if (!module.toggle) world.events.entityCreate.unsubscribe(ac)
 
+    const ad = world.events.blockPlace.subscribe(({block, player: plr, dimension}) => {
+        if (permission.getLevel(plr.getTags()) >= 60) return
+        const {x, y, z} = block
+        if ( ccfg.illegalItem.checkContainerOnPlace && block.getComponent('inventory') && block.id != 'minecraft:shulker_box' && block.id != 'minecraft:undyed_shulker_box' ) {
+            const c = block.getComponent('inventory').container
+            for (let i = block.id == 'minecraft:chest' || block.id == 'minecraft:trapped_chest' ? c.size - 27 : 0, m = c.size; i < m; i++)
+                if (c.getItem(i)) {
+                    execCmd(`tag @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item] add _temp`, dimension, true)
+                    execCmd(`setblock ${x} ${y} ${z} air 0 destroy`, dimension, true)
+                    execCmd(`kill @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=!_temp]`, dimension, true)
+                    execCmd(`tag @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=_temp] remove _temp`, dimension, true)
+
+                    const info = `placed a §cnon-empty container§r §8(at ${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§r))`
+
+                    switch (ccfg.illegalItem.nonEmptyContainerOnPlaceActionType) {
+                        // case 'clear': {}; break
+
+                        case 'warn': {
+                            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnon-empty container§r at ${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§r)!`)
+                        }; break
+
+                        case 'kick': {
+                            kick(plr, info)
+                            return 2
+                        }; break
+
+                        case 'ban': {
+                            bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                            kick(plr, {
+                                type: 'ban',
+                                banDuration: ccfg.illegalItem.banDuration,
+                                reason: info
+                            })
+                            return 2
+                        }; break
+
+                        case 'blacklist': {
+                            blcfg[plr.uid] = plr.uid
+                            kick(plr, {
+                                type: 'blacklist',
+                                reason: info
+                            })
+                            return 2
+                        }; break
+                    }
+                    break
+                }
+        } else if ( ccfg.illegalItem.renewOnPlace && block.id in rcfg ) {
+            const blockPrm = block.permutation, blockType = block.type
+            execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
+            block.setType(blockType)
+            block.setPermutation(blockPrm)
+        }
+    })
+    if (!module.toggle) world.events.blockPlace.unsubscribe(ad)
+
     // switch event listeners
     const ag = module.ev.enable.subscribe(() => {
         world.events.tick.subscribe(aa)
         world.events.beforeItemUse.subscribe(ab)
         world.events.entityCreate.subscribe(ac)
+        world.events.blockPlace.subscribe(ad)
     })
 
     const ah = module.ev.disable.subscribe(() => {
         world.events.tick.unsubscribe(aa)
         world.events.beforeItemUse.unsubscribe(ab)
         world.events.entityCreate.unsubscribe(ac)
+        world.events.blockPlace.unsubscribe(ad)
     })
 
     const ai = b.ev.unload.subscribe(() => {
