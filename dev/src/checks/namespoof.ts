@@ -99,7 +99,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         ae()
         module.ev.enable.unsubscribe(ad)
         module.ev.disable.unsubscribe(ae)
-        b.ev.unload.subscribe(af)
+        b.ev.unload.unsubscribe(af)
     })
 }
 
