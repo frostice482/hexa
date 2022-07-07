@@ -12,11 +12,11 @@ pli.internalModules['checks/ban'] = async (b) => {
 
         kick(plr, {
             useTemplate: false,
-            reason: `You are currently §cblacklisted§r from playing in this server for §a${ convertToReadableTime(bancfg[plr.uid]) }`,
+            reason: `You are currently §cbanned§r from playing in this server for §a${ convertToReadableTime(bancfg[plr.uid]) }`,
             announceLevel: 'none'
         })
         ctrl.break()
-    }, 1001)
+    }, 1002)
 
     const af = b.ev.unload.subscribe(() => {
         server.ev.playerJoin.unsubscribe(aa)

@@ -15,7 +15,7 @@ pli.internalModules['checks/whitelist'] = async (b) => {
 
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if ( permission.getLevel(plr.getTags()) >= 60 && whitecfg[plr.name] == plr.uid ) return
+        if ( permission.getLevel(plr.getTags()) >= 60 || whitecfg[plr.name] == plr.uid ) return
 
         kick(plr, {
             useTemplate: false,
