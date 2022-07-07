@@ -12,7 +12,7 @@ pli.internalModules['checks/ban'] = async (b) => {
 
         kick(plr, {
             useTemplate: false,
-            reason: `You are currently §cbanned§r from playing in this server for §a${ convertToReadableTime(bancfg[plr.uid], false) }`,
+            reason: `You are currently §cbanned§r from playing in this server for §a${ convertToReadableTime(bancfg[plr.uid] - Date.now(), true) }`,
             announceLevel: 'none'
         })
         ctrl.break()
