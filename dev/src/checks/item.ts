@@ -182,9 +182,9 @@ pli.internalModules['checks/item'] = async (b) => {
     })
     if (!module.toggle) world.events.tick.unsubscribe(aa)
 
-    const ab = world.events.beforeItemUse.subscribe((evd) => {
+    const ab = world.events.beforeItemUseOn.subscribe((evd) => {
         const { source: plr, item } = evd
-        if (!( plr instanceof Player && item && !( permission.getLevel(plr.getTags()) < 60 ) )) return
+        if (!( plr instanceof Player && item && permission.getLevel(plr.getTags()) < 60 )) return
 
         if (scanItem(plr, plr.selectedSlot, item) != 0) evd.cancel = true
     })
@@ -195,9 +195,9 @@ pli.internalModules['checks/item'] = async (b) => {
 
         const i = entity.getComponent('item').itemStack
         const closestPlrName = execCmd('testfor @p', entity, true).victim?.[0],
-            [closestPlr] = closestPlrName ? world.getPlayers( Object.assign( new EntityQueryOptions, { name: closestPlrName, closest: 1 } ) ) : []
+            [closestPlr] = closestPlrName ? world.getPlayers( Object.assign( new EntityQueryOptions, { name: closestPlrName } ) ) : []
         
-        const dropInfo = `has been dropped at ${Area.toLocationArray(entity.location).map(v => `§a${v}§r`).join(', ')} (§a${entity.dimension.id}§r)!`,
+        const dropInfo = `has been dropped at ${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)!`,
             closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
 
         if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {

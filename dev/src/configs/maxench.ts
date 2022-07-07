@@ -51,7 +51,7 @@ const aa = pli.internalModules['configs/maxench'] = async (b) => {
     
     const compatibleEnchantments = (list: string[] = []): Record<string, number> => {
         const o = Object.create(null)
-        for (const k in maxEnchantLevels) Object.defineProperty(o, k, { get: () => maxEnchantLevels[k], set: (v) => maxEnchantLevels[k] = v })
+        for (const k of list) Object.defineProperty(o, k, { get: () => maxEnchantLevels[k], set: (v) => maxEnchantLevels[k] = v })
         return o
     }
     const slotCompatibleEnchantments: Record<number, Record<string, number>> = Object.setPrototypeOf({
