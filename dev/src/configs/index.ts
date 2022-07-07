@@ -13,6 +13,7 @@ import './worldboundary.js'
 
 import pli from '../pli.js'
 import type { config_banlist } from './banlist.js'
+import type { config_blacklist } from './blacklist.js'
 import type { config_common } from './common.js'
 import type { config_hardboundary } from './hardboundary.js'
 import type { config_id } from './id.js'
@@ -27,6 +28,7 @@ import type { config_worldboundary } from './worldboundary.js'
 const aa = pli.internalModules['configs/index'] = async (b) => {
     return {
         banlist: await b.importInternal('configs/banlist') as Awaited<config_banlist>,
+        blacklist: await b.importInternal('configs/blacklist') as Awaited<config_blacklist>,
         common: await b.importInternal('configs/common') as Awaited<config_common>,
         hardBoundary: await b.importInternal('configs/hardboundary') as Awaited<config_hardboundary>,
         id: await b.importInternal('configs/id') as Awaited<config_id>,
