@@ -5,15 +5,18 @@ const aa = pli.internalModules['configs/hardboundary'] = async (b) => {
     const { scoreboard, storage, Area } = await b.import('se')
     const config = await b.importInternal('libs/config') as libs_config
 
+    const maxHorizontalBoundary = 0x1ffffff,
+        maxVerticalBoundary = 0x1ffffff
+
     const saveId = `HX:HB:${storage.instance.default.uniqueID.slice(0, 10)}`
     const hardBoundary = !scoreboard.objective.exist(saveId)
         ? Object.assign(config(scoreboard.objective.create(saveId).dummies), {
-            x1: -33554432,
-            y1: -120,
-            z1: -33554432,
-            x2: 33554432,
-            y2: 8176,
-            z2: 33554432,
+            x1: ~maxHorizontalBoundary,
+            y1: -105,
+            z1: ~maxHorizontalBoundary,
+            x2: maxHorizontalBoundary,
+            y2: maxVerticalBoundary,
+            z2: maxHorizontalBoundary,
         })
         : config(scoreboard.objective.edit(saveId).dummies)
     
