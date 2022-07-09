@@ -249,10 +249,13 @@ pli.internalModules['checks/item'] = async (b) => {
     const ad = world.events.blockPlace.subscribe(({block, player: plr, dimension}) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
         const {x, y, z} = block
-        if ( ccfg.illegalItem.checkContainerOnPlace && block.getComponent('inventory') && block.id != 'minecraft:shulker_box' && block.id != 'minecraft:undyed_shulker_box' ) {
+        if ( ccfg.illegalItem.checkContainerOnPlace && block.getComponent('inventory') ) {
             const c = block.getComponent('inventory').container
-            for (let i = block.id == 'minecraft:chest' || block.id == 'minecraft:trapped_chest' ? c.size - 27 : 0, m = c.size; i < m; i++)
-                if (c.getItem(i)) {
+            let clr = false
+            for (let ix = block.id == 'minecraft:chest' || block.id == 'minecraft:trapped_chest' ? c.size - 27 : 0, m = c.size; ix < m; ix++) {
+                const i = c.getItem(ix)
+                if (!i) continue
+                if (block.id != 'minecraft:shulker_box' && block.id != 'minecraft:undyed_shulker_box') {
                     execCmd(`tag @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item] add _temp`, dimension, true)
                     execCmd(`setblock ${x} ${y} ${z} air 0 destroy`, dimension, true)
                     execCmd(`kill @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=!_temp]`, dimension, true)
@@ -291,8 +294,16 @@ pli.internalModules['checks/item'] = async (b) => {
                             return 2
                         }; break
                     }
-                    break
+                    return
+                } else {
+                    const lvl = scanItem(plr, ix, i, c)
+                    clr = clr || lvl != 0
+                    if (lvl == 2) break
                 }
+            }
+            if (clr) {
+                execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
+            }
         } else if ( ccfg.illegalItem.renewOnPlace && block.id in rcfg ) {
             const blockPrm = block.permutation, blockType = block.type
             execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
