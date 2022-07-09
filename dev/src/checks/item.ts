@@ -35,7 +35,8 @@ pli.internalModules['checks/item'] = async (b) => {
         checkEnch: true,
         enchActionType: 'ban',
         checkContainerOnPlace: true,
-        nonEmptyContainerOnPlaceActionType: 'kick',
+        nonEmptyContainerActionType: 'kick',
+        nestedContainerActionType: 'ban',
         renewOnPlace: true,
         banDuration: 31449600
     }
@@ -202,12 +203,12 @@ pli.internalModules['checks/item'] = async (b) => {
         const closestPlrName = execCmd('testfor @p', entity, true).victim?.[0],
             [closestPlr] = closestPlrName ? world.getPlayers( Object.assign( new EntityQueryOptions, { name: closestPlrName } ) ) : []
         
-        const dropInfo = `has been dropped at ${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)!`,
+        const blLoc = `${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)`,
             closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
 
         if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             sendMsgToPlayers(getAdmins(), [
-                `§6[§eHEXA§6]§r A §cbanned item§r ${dropInfo} §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
+                `§6[§eHEXA§6]§r A §cbanned item§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
                 closestPlrInfo
             ])
             entity.kill()
@@ -216,7 +217,7 @@ pli.internalModules['checks/item'] = async (b) => {
 
         if ( ccfg.illegalItem.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize ) ) ) {
             sendMsgToPlayers(getAdmins(), [
-                `§6[§eHEXA§6]§r An §cillegal stack size§r ${dropInfo} §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`,
+                `§6[§eHEXA§6]§r An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`,
                 closestPlrInfo
             ])
             entity.kill()
@@ -232,7 +233,7 @@ pli.internalModules['checks/item'] = async (b) => {
                         maxLevel = slotMaxLevel[enchId] ?? 0
                     if ( curLevel < 0 || curLevel > maxLevel) {
                         sendMsgToPlayers(getAdmins(), [
-                            `§6[§eHEXA§6]§r An §cillegal enchantment§r ${dropInfo} §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`,
+                            `§6[§eHEXA§6]§r An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`,
                             closestPlrInfo
                         ])
                         entity.kill()
@@ -248,10 +249,17 @@ pli.internalModules['checks/item'] = async (b) => {
 
     const ad = world.events.blockPlace.subscribe(({block, player: plr, dimension}) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
+
+        const blLoc = `${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§r)`,
+            blLocGray = `${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§r)`
+
         const {x, y, z} = block
+
         if ( ccfg.illegalItem.checkContainerOnPlace && block.getComponent('inventory') ) {
             const c = block.getComponent('inventory').container
             let clr = false
+
+            itemLoop:
             for (let ix = block.id == 'minecraft:chest' || block.id == 'minecraft:trapped_chest' ? c.size - 27 : 0, m = c.size; ix < m; ix++) {
                 const i = c.getItem(ix)
                 if (!i) continue
@@ -261,18 +269,18 @@ pli.internalModules['checks/item'] = async (b) => {
                     execCmd(`kill @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=!_temp]`, dimension, true)
                     execCmd(`tag @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=_temp] remove _temp`, dimension, true)
 
-                    const info = `placed a §cnon-empty container§r §8(at ${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§r))`
+                    const info = `placed a §cnon-empty container§r §8(at ${blLocGray})`
 
-                    switch (ccfg.illegalItem.nonEmptyContainerOnPlaceActionType) {
+                    switch (ccfg.illegalItem.nonEmptyContainerActionType) {
                         // case 'clear': {}; break
 
                         case 'warn': {
-                            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnon-empty container§r at ${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§r)!`)
+                            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnon-empty container§r at ${blLoc}!`)
                         }; break
 
                         case 'kick': {
                             kick(plr, info)
-                            return 2
+                            return
                         }; break
 
                         case 'ban': {
@@ -282,7 +290,7 @@ pli.internalModules['checks/item'] = async (b) => {
                                 banDuration: ccfg.illegalItem.banDuration,
                                 reason: info
                             })
-                            return 2
+                            return
                         }; break
 
                         case 'blacklist': {
@@ -291,19 +299,59 @@ pli.internalModules['checks/item'] = async (b) => {
                                 type: 'blacklist',
                                 reason: info
                             })
-                            return 2
+                            return
                         }; break
                     }
                     return
                 } else {
-                    const lvl = scanItem(plr, ix, i, c)
-                    clr = clr || lvl != 0
-                    if (lvl == 2) break
+                    if (i.id == 'minecraft:shulker_box' || i.id == 'minecraft:undyed_shulker_box') {
+                        c.setItem(ix, air)
+
+                        const info = `placed a §cnested container§r §8(at ${blLocGray})`
+
+                        switch (ccfg.illegalItem.nestedContainerActionType) {
+                            // case 'clear': {}; break
+
+                            case 'warn': {
+                                sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnested container§r at ${blLoc}!`)
+                            }; break
+
+                            case 'kick': {
+                                kick(plr, info)
+                                clr = true
+                                break itemLoop
+                            }; break
+
+                            case 'ban': {
+                                bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                                kick(plr, {
+                                    type: 'ban',
+                                    banDuration: ccfg.illegalItem.banDuration,
+                                    reason: info
+                                })
+                                clr = true
+                                break itemLoop
+                            }; break
+
+                            case 'blacklist': {
+                                blcfg[plr.uid] = plr.uid
+                                kick(plr, {
+                                    type: 'blacklist',
+                                    reason: info
+                                })
+                                clr = true
+                                break itemLoop
+                            }; break
+                        }
+                    }
+                    if (scanItem(plr, ix, i, c) == 2) {
+                        clr = true
+                        break itemLoop
+                    }
                 }
             }
-            if (clr) {
-                execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
-            }
+            
+            if (clr) execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
         } else if ( ccfg.illegalItem.renewOnPlace && block.id in rcfg ) {
             const blockPrm = block.permutation, blockType = block.type
             execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
