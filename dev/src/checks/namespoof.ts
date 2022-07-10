@@ -19,7 +19,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('namespoof', 'Namespoof', true)
 
-    ccfg.namespoof = {
+    const cfg = ccfg.namespoof = {
         checkUID: true,
         uidMismatchActionType: 'kick',
 
@@ -37,18 +37,18 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         banDuration: 31449600
     }
 
-    let illegalNameRegex = parseRegex( ccfg.namespoof.illegalNameRegex )
-    Object.defineProperty(ccfg.namespoof, 'illegalNameRegex', {
+    let illegalNameRegex = parseRegex( cfg.illegalNameRegex )
+    Object.defineProperty(cfg, 'illegalNameRegex', {
         get: () => String(illegalNameRegex),
         set: (v) => illegalNameRegex = parseRegex(v ??= '')
     })
 
     const begone = (plr: Player, ctrl: eventControl, reason: string, type: 'kick' | 'ban' | 'blacklist') => {
-        if (type == 'ban') bancfg[plr.uid] = Date.now() + ccfg.namespoof.banDuration * 1000
+        if (type == 'ban') bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
         if (type == 'blacklist') blackcfg[plr.uid] = 0
         kick(plr, {
             type,
-            banDuration: ccfg.namespoof.banDuration,
+            banDuration: cfg.banDuration,
             reason: reason,
         })
         ctrl.break()
@@ -56,29 +56,29 @@ pli.internalModules['checks/namespoof'] = async (b) => {
 
     const tests: Record<string, (plr: Player, ctrl: eventControl) => boolean> = {
         rename: (plr, ctrl) => {
-            if ( ccfg.namespoof.checkRename && plr.uid !== -1 && icfg2[plr.uid] !== plr.name ) {
-                begone(plr, ctrl, `§cNamespoof§r §7(Renamed)§r §8(player UID: §2${plr.uid}§8, known as: §2${icfg2[plr.uid]}§8)`, ccfg.namespoof.renameActionType)
+            if ( cfg.checkRename && plr.uid !== -1 && icfg2[plr.uid] !== plr.name ) {
+                begone(plr, ctrl, `§cNamespoof§r §7(Renamed)§r §8(player UID: §2${plr.uid}§8, known as: §2${icfg2[plr.uid]}§8)`, cfg.renameActionType)
                 return true
             }
             return false
         },
         illegalName: (plr, ctrl) => {
-            if ( ccfg.namespoof.checkIllegalName && illegalNameRegex.test(plr.name) ) {
-                begone(plr, ctrl, `§cNamespoof§r §7(Illegal name)§r`, ccfg.namespoof.illegalNameActionType)
+            if ( cfg.checkIllegalName && illegalNameRegex.test(plr.name) ) {
+                begone(plr, ctrl, `§cNamespoof§r §7(Illegal name)§r`, cfg.illegalNameActionType)
                 return true
             }
             return false
         },
         nameLength: (plr, ctrl) => {
-            if ( ccfg.namespoof.checkNameLength && plr.name.length > ccfg.namespoof.maxNameLength ) {
-                begone(plr, ctrl, `§cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${ccfg.namespoof.maxNameLength}§8)`, ccfg.namespoof.lengthActionType)
+            if ( cfg.checkNameLength && plr.name.length > cfg.maxNameLength ) {
+                begone(plr, ctrl, `§cNamespoof§r §7(Name length exceeded)§r §8(length: §2${plr.name.length}§8, max length: §2${cfg.maxNameLength}§8)`, cfg.lengthActionType)
                 return true
             }
             return false
         },
         uid: (plr, ctrl) => {
-            if ( ccfg.namespoof.checkUID && plr.uid !== -1 && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
-                begone(plr, ctrl, `§cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`, ccfg.namespoof.uidMismatchActionType)
+            if ( cfg.checkUID && plr.uid !== -1 && plr.name in icfg && icfg[plr.name] !== plr.uid ) {
+                begone(plr, ctrl, `§cNamespoof§r §7(UID mismatch)§r §8(player UID: §2${plr.uid}§8, expected UID: §2${icfg[plr.name]}§8)`, cfg.uidMismatchActionType)
                 return true
             }
             return false

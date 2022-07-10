@@ -25,7 +25,7 @@ pli.internalModules['checks/item'] = async (b) => {
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('illegalitem', 'IllegalItem', true)
 
-    ccfg.illegalItem ??= {
+    const cfg = ccfg.illegalItem ??= {
         checkInterval: 1,
         checkDroppedItem: true,
         checkItemBan: true,
@@ -51,7 +51,7 @@ pli.internalModules['checks/item'] = async (b) => {
 
     const scanItem = (plr: Player, index: number, i: ItemStack, c: BlockInventoryComponentContainer | InventoryComponentContainer = plr.getComponent('inventory').container): 0 | 1 | 2 => {
         // check item ban
-        if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
+        if ( cfg.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             c.setItem(index, air)
             const info = `§cBanned item§r §8(Item: §2${i.id}§8, data: §2${i.data}§8)`
             switch (ibcfg[i.id].action) {
@@ -67,10 +67,10 @@ pli.internalModules['checks/item'] = async (b) => {
                 }; break
 
                 case 'ban': {
-                    bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: ccfg.illegalItem.banDuration,
+                        banDuration: cfg.banDuration,
                         reason: info
                     })
                     return 2
@@ -89,10 +89,10 @@ pli.internalModules['checks/item'] = async (b) => {
         }
 
         // check stack
-        if ( ccfg.illegalItem.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize ) ) ) {
+        if ( cfg.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? cfg.defaultStackSize ) ) ) {
             c.setItem(index, air)
-            const info = `§cIllegal stack size§r §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`
-            switch (ccfg.illegalItem.stackActionType) {
+            const info = `§cIllegal stack size§r §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`
+            switch (cfg.stackActionType) {
                 // case 'clear': {}; break
 
                 case 'warn': {
@@ -105,10 +105,10 @@ pli.internalModules['checks/item'] = async (b) => {
                 }; break
 
                 case 'ban': {
-                    bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: ccfg.illegalItem.banDuration,
+                        banDuration: cfg.banDuration,
                         reason: info
                     })
                     return 2
@@ -127,7 +127,7 @@ pli.internalModules['checks/item'] = async (b) => {
         }
 
         // check enchantment
-        if ( ccfg.illegalItem.checkEnch ) {
+        if ( cfg.checkEnch ) {
             const e = i.getComponent('enchantments').enchantments
             const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]
             for (const enchId of enchList) {
@@ -136,7 +136,7 @@ pli.internalModules['checks/item'] = async (b) => {
                 if ( curLevel < 0 || curLevel > maxLevel) {
                     c.setItem(index, air)
                     const info = `§cIllegal enchantment§r §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`
-                    switch (ccfg.illegalItem.enchActionType) {
+                    switch (cfg.enchActionType) {
                         // case 'clear': {}; break
 
                         case 'warn': {
@@ -149,10 +149,10 @@ pli.internalModules['checks/item'] = async (b) => {
                         }; break
 
                         case 'ban': {
-                            bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                            bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
                             kick(plr, {
                                 type: 'ban',
-                                banDuration: ccfg.illegalItem.banDuration,
+                                banDuration: cfg.banDuration,
                                 reason: info
                             })
                             return 2
@@ -184,7 +184,7 @@ pli.internalModules['checks/item'] = async (b) => {
     }
 
     const aa = world.events.tick.subscribe(({currentTick}) => {
-        if (currentTick % ccfg.illegalItem.checkInterval !== 0) return
+        if (currentTick % cfg.checkInterval !== 0) return
 
         for (const plr of world.getPlayers()) {
             if (permission.getLevel(plr.getTags()) >= 60) continue
@@ -202,7 +202,7 @@ pli.internalModules['checks/item'] = async (b) => {
     if (!module.toggle) world.events.beforeItemUse.unsubscribe(ab)
 
     const ac = world.events.entityCreate.subscribe(({entity}) => {
-        if (!( ccfg.illegalItem.checkDroppedItem && entity.hasComponent('item'))) return
+        if (!( cfg.checkDroppedItem && entity.hasComponent('item'))) return
 
         const i = entity.getComponent('item').itemStack
         const closestPlrName = execCmd('testfor @p', entity, true).victim?.[0],
@@ -211,7 +211,7 @@ pli.internalModules['checks/item'] = async (b) => {
         const blLoc = `${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)`,
             closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
 
-        if ( ccfg.illegalItem.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
+        if ( cfg.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             sendMsgToPlayers(getAdmins(), [
                 `§6[§eHEXA§6]§r A §cbanned item§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
                 closestPlrInfo
@@ -220,16 +220,16 @@ pli.internalModules['checks/item'] = async (b) => {
             return
         }
 
-        if ( ccfg.illegalItem.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize ) ) ) {
+        if ( cfg.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? cfg.defaultStackSize ) ) ) {
             sendMsgToPlayers(getAdmins(), [
-                `§6[§eHEXA§6]§r An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? ccfg.illegalItem.defaultStackSize}§8)`,
+                `§6[§eHEXA§6]§r An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`,
                 closestPlrInfo
             ])
             entity.kill()
             return
         }
 
-        if ( ccfg.illegalItem.checkEnch ) {
+        if ( cfg.checkEnch ) {
             try {
                 const e = i.getComponent('enchantments').enchantments
                 const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]
@@ -260,7 +260,7 @@ pli.internalModules['checks/item'] = async (b) => {
 
         const {x, y, z} = block
 
-        if ( ccfg.illegalItem.checkContainerOnPlace && block.getComponent('inventory') ) {
+        if ( cfg.checkContainerOnPlace && block.getComponent('inventory') ) {
             const c = block.getComponent('inventory').container
             let clr = false
 
@@ -276,7 +276,7 @@ pli.internalModules['checks/item'] = async (b) => {
 
                     const info = `placed a §cnon-empty container§r §8(at ${blLocGray})`
 
-                    switch (ccfg.illegalItem.nonEmptyContainerActionType) {
+                    switch (cfg.nonEmptyContainerActionType) {
                         // case 'clear': {}; break
 
                         case 'warn': {
@@ -289,10 +289,10 @@ pli.internalModules['checks/item'] = async (b) => {
                         }; break
 
                         case 'ban': {
-                            bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                            bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
                             kick(plr, {
                                 type: 'ban',
-                                banDuration: ccfg.illegalItem.banDuration,
+                                banDuration: cfg.banDuration,
                                 reason: info
                             })
                             return
@@ -314,7 +314,7 @@ pli.internalModules['checks/item'] = async (b) => {
 
                         const info = `placed a §cnested container§r §8(at ${blLocGray})`
 
-                        switch (ccfg.illegalItem.nestedContainerActionType) {
+                        switch (cfg.nestedContainerActionType) {
                             // case 'clear': {}; break
 
                             case 'warn': {
@@ -328,10 +328,10 @@ pli.internalModules['checks/item'] = async (b) => {
                             }; break
 
                             case 'ban': {
-                                bancfg[plr.uid] = Date.now() + ccfg.illegalItem.banDuration * 1000
+                                bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
                                 kick(plr, {
                                     type: 'ban',
-                                    banDuration: ccfg.illegalItem.banDuration,
+                                    banDuration: cfg.banDuration,
                                     reason: info
                                 })
                                 clr = true
@@ -357,7 +357,7 @@ pli.internalModules['checks/item'] = async (b) => {
             }
             
             if (clr) execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
-        } else if ( ccfg.illegalItem.renewOnPlace && block.id in rcfg ) {
+        } else if ( cfg.renewOnPlace && block.id in rcfg ) {
             const blockPrm = block.permutation, blockType = block.type
             execCmd(`setblock ${x} ${y} ${z} air`, dimension, true)
             block.setType(blockType)
