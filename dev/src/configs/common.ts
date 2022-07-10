@@ -5,28 +5,40 @@ export type commonSaveData = {
         useKickCommand: boolean
     }
     namespoof: {
-        actionType: 'kick' | 'ban' | 'blacklist'
-        banDuration: number
         checkUID: boolean
+        uidMismatchActionType: 'kick' | 'ban' | 'blacklist'
+
+        checkRename: boolean
+        renameActionType: 'kick' | 'ban' | 'blacklist'
+
         checkNameLength: boolean
         maxNameLength: number
+        lengthActionType: 'kick' | 'ban' | 'blacklist'
+
         checkIllegalName: boolean
-        checkRename: boolean
         illegalNameRegex: string
+        illegalNameActionType: 'kick' | 'ban' | 'blacklist'
+
+        banDuration: number
     }
     illegalItem: {
         checkInterval: number
         checkDroppedItem: boolean
         checkItemBan: boolean
+
         checkStack: boolean
         defaultStackSize: number
         stackActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+
         checkEnch: boolean
+        enchActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+
         checkContainerOnPlace: boolean
         nonEmptyContainerActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
         nestedContainerActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+
         renewOnPlace: boolean
-        enchActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        
         banDuration: number
     }
 }
