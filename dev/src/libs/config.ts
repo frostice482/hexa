@@ -7,7 +7,7 @@ const aa = pli.internalModules['libs/config'] = () => {
     return Object.assign(
         (dummies: objective['dummies']) => {
             const cache: Record<string, number> = Object.create(null)
-            for (const [name, score] of dummies.getScores()) cache[JSON.parse(`"${name.substring(2)}"`)] = score
+            for (const [name, score] of dummies.getScores()) cache[name.substring(2)] = score
             return new Proxy(cache, {
                 set: (t, p, v) => {
                     if (typeof p == 'symbol') return true
