@@ -4,6 +4,40 @@ export type commonSaveData = {
     kick: {
         useKickCommand: boolean
     }
+    combat: {
+        killaura: {
+            check: boolean
+            tolerance: [horizontal: number, vertical: number]
+
+            actionThresholds: {
+                warn: number
+                kick: number
+                ban: number
+            }
+        }
+        reach: {
+            check: boolean
+
+            threshold: number
+            actionThresholds: {
+                warn: number
+                kick: number
+                ban: number
+            }
+        }
+        autoclicker: {
+            check: boolean
+
+            threshold: number
+            actionThresholds: {
+                warn: number
+                kick: number
+                ban: number
+            }
+        }
+        vcCooldownInterval: number
+        banDuration: number
+    }
     namespoof: {
         checkUID: boolean
         uidMismatchActionType: 'kick' | 'ban' | 'blacklist'
