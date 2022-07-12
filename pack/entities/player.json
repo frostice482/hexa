@@ -45,7 +45,7 @@
                     "remove_effects": "bad_omen"
                 }
             },
-            "se:kick": {
+            "hexa:kick": {
                 "minecraft:instant_despawn": {}
             }
         },
@@ -217,10 +217,10 @@
                     ]
                 }
             },
-            "se:kick": {
+            "hexa:kick": {
                 "add": {
                     "component_groups": [
-                        "se:kick"
+                        "hexa:kick"
                     ]
                 }
             }

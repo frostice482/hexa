@@ -13,7 +13,7 @@ export type kickConfig = {
 }
 
 const aa = pli.internalModules['libs/misc'] = async (b) => {
-    const { world } = await b.import('mc')
+    const { world, Player } = await b.import('mc')
     const { permission, execCmd, misc: { convertToReadableTime }, sendChat: { sendMsgToPlayers, sendMsg } } = await b.import('se')
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
 
@@ -26,6 +26,8 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
     ccfg.kick ??= {
         useKickCommand: true
     }
+
+    const kickablePlayers = new WeakSet<Player>()
 
     const kick = (plr: Player, messsage: string | string[] | kickConfig) => {
         const {
@@ -54,9 +56,23 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             if (!ccfg.kick.useKickCommand) throw 0
             execCmd(`kick ${JSON.stringify(plr.name)} ${ useTemplate ? [ `You have been ${kickType} ${aa}.`, `Moderator: §b${modName}`, `Reason: ${reason}` ].join('\n§r') : reason} `)
         } catch {
-            plr.triggerEvent('se:kick')
+            kickablePlayers.add(plr)
+            plr.triggerEvent('hexa:kick')
         }
     }
+
+    const aa = world.events.beforeDataDrivenEntityTriggerEvent.subscribe((evd) => {
+        if (!(
+            evd.entity instanceof Player
+            && evd.id == 'hexa:kick'
+            && kickablePlayers.has(evd.entity)
+        )) evd.cancel = true
+    })
+
+    const ab = b.ev.unload.subscribe(() => {
+        world.events.beforeDataDrivenEntityTriggerEvent.unsubscribe(aa)
+        b.ev.unload.unsubscribe(ab)
+    })
 
     return {
         kick,
