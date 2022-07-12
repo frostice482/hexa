@@ -1,6 +1,7 @@
 import './configs/index.js'
 import './libs/index.js'
 import './checks/index.js'
+import './misc/index.js'
 
 import pli from "./pli.js";
 import { configs } from './configs/index.js';

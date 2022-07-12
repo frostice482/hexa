@@ -217,6 +217,7 @@
                     ]
                 }
             },
+            "hexa:dummy": {},
             "hexa:kick": {
                 "add": {
                     "component_groups": [
