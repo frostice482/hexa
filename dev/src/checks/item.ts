@@ -255,8 +255,8 @@ pli.internalModules['checks/item'] = async (b) => {
     const ad = world.events.blockPlace.subscribe(({block, player: plr, dimension}) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
 
-        const blLoc = `${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§r)`,
-            blLocGray = `${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§r)`
+        const blLoc = `${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§8)`,
+            blLocGray = `${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§8)`
 
         const {x, y, z} = block
 

@@ -1,5 +1,6 @@
 import type { Player } from "mojang-minecraft";
 import { config_common } from "../configs/common.js";
+import { misc_plrjson } from "../misc/plrjson.js";
 import pli from "../pli.js";
 
 export type kickConfig = {
@@ -23,11 +24,10 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
                 yield plr
     }
 
+    // --- kick ---
     ccfg.kick ??= {
         useKickCommand: true
     }
-
-    const kickablePlayers = new WeakSet<Player>()
 
     const kick = (plr: Player, messsage: string | string[] | kickConfig) => {
         const {
@@ -53,7 +53,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         }
         
         try {
-            if (!ccfg.kick.useKickCommand) throw 0
+            if (usePlayerJson && !ccfg.kick.useKickCommand) throw 0
             execCmd(`kick ${JSON.stringify(plr.name)} ${ useTemplate ? [ `You have been ${kickType} ${aa}.`, `Moderator: §b${modName}`, `Reason: ${reason}` ].join('\n§r') : reason} `)
         } catch {
             kickablePlayers.add(plr)
@@ -61,12 +61,20 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         }
     }
 
+    const kickablePlayers = new WeakSet<Player>()
+
+    let usePlayerJson = false
+    ;(b.importInternal('misc/plrjson') as misc_plrjson).then(v => {
+        if (!v) sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r player.json is not detected / currently overridden.`)
+        usePlayerJson = v
+    })
+
     const aa = world.events.beforeDataDrivenEntityTriggerEvent.subscribe((evd) => {
-        if (!(
+        if (
             evd.entity instanceof Player
             && evd.id == 'hexa:kick'
-            && kickablePlayers.has(evd.entity)
-        )) evd.cancel = true
+            && !kickablePlayers.has(evd.entity)
+        ) evd.cancel = true
     })
 
     const ab = b.ev.unload.subscribe(() => {
