@@ -130,12 +130,11 @@ pli.internalModules['checks/item'] = async (b) => {
         if ( cfg.checkEnch ) {
             const e = i.getComponent('enchantments').enchantments
             const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]
-            for (const enchId of enchList) {
-                const curLevel: number = e.hasEnchantment(MinecraftEnchantmentTypes[enchId]),
-                    maxLevel = slotMaxLevel[enchId] ?? 0
-                if ( curLevel < 0 || curLevel > maxLevel) {
+            for (const { level, type: { id } } of e) {
+                const maxLevel = slotMaxLevel[id] ?? 0
+                if ( level < 0 || level > maxLevel) {
                     c.setItem(index, air)
-                    const info = `§cIllegal enchantment§r §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`
+                    const info = `§cIllegal enchantment§r §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`
                     switch (cfg.enchActionType) {
                         // case 'clear': {}; break
 
@@ -233,12 +232,11 @@ pli.internalModules['checks/item'] = async (b) => {
             try {
                 const e = i.getComponent('enchantments').enchantments
                 const slotMaxLevel = mecfg.slotCompatibleEnchantments[e.slot]
-                for (const enchId of enchList) {
-                    const curLevel: number = e.hasEnchantment(MinecraftEnchantmentTypes[enchId]),
-                        maxLevel = slotMaxLevel[enchId] ?? 0
-                    if ( curLevel < 0 || curLevel > maxLevel) {
+                for (const { level, type: { id } } of e) {
+                    const maxLevel = slotMaxLevel[id] ?? 0
+                    if ( level < 0 || level > maxLevel) {
                         sendMsgToPlayers(getAdmins(), [
-                            `§6[§eHEXA§6]§r An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${enchId}§8, level: §2${curLevel}§8, maximum: §2${maxLevel}§8)`,
+                            `§6[§eHEXA§6]§r An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`,
                             closestPlrInfo
                         ])
                         entity.kill()
