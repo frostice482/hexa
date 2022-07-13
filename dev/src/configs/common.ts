@@ -86,6 +86,15 @@ export type commonSaveData = {
         checkInterval: number
         banDuration: number
     }
+    boundary: {
+        checkInterval: number
+        padding: number
+        hardBoundary: {
+            enabled: boolean
+            actionType: 'warn' | 'kick' | 'ban' | 'blacklist'
+            banDuration: number
+        }
+    }
 }
 
 const aa = pli.internalModules['configs/common'] = async (b) => {

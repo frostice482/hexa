@@ -5,6 +5,7 @@ import './item.js'
 import './namespoof.js'
 import './whitelist.js'
 import './gamemode.js'
+import './boundary.js'
 
 import pli from '../pli.js'
 
@@ -16,4 +17,5 @@ pli.internalModules['checks/index'] = async (b) => {
     await b.importInternal('checks/namespoof')
     await b.importInternal('checks/whitelist')
     await b.importInternal('checks/gamemode')
+    await b.importInternal('checks/boundary')
 }
