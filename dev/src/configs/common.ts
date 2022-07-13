@@ -75,6 +75,17 @@ export type commonSaveData = {
         
         banDuration: number
     }
+    gamemode: {
+        [K in 'survival' | 'creative' | 'adventure' | 'spectator']: {
+            enabled: boolean
+            exclude?: string
+            actionType: 'warn' | 'kick' | 'ban' | 'blacklist'
+            setTo: Exclude<'survival' | 'creative' | 'adventure' | 'spectator', K>
+        }
+    } & {
+        checkInterval: number
+        banDuration: number
+    }
 }
 
 const aa = pli.internalModules['configs/common'] = async (b) => {
