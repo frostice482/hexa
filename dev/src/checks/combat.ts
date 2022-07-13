@@ -404,7 +404,7 @@ pli.internalModules['checks/combat'] = async (b) => {
     }
 
     const aa = world.events.entityHit.subscribe(({entity: plr, hitEntity: target}) => {
-        if (!( plr instanceof Player && target instanceof Player )) return
+        if (!( plr instanceof Player && target instanceof Player && permission.getLevel(plr.getTags()) < 60 )) return
 
         const ctime = Date.now()
 
