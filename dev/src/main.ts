@@ -10,10 +10,13 @@ import { libs_module } from './libs/module.js';
 pli.internalModules['main'] = async (b) => {
     const configs = await b.importInternal('configs/index') as Awaited<configs>
     await b.importInternal('checks/index')
-    return {
+    
+    const o = {
         configs,
         module: await b.importInternal('libs/module') as Awaited<libs_module>
     }
+    globalThis.hexa = o
+    return o
 }
 
 pli.send()
