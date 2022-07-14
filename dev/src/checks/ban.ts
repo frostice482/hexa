@@ -8,7 +8,7 @@ pli.internalModules['checks/ban'] = async (b) => {
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if ( permission.getLevel(plr.getTags()) >= 60 || !( plr.uid in bancfg ) ) return
+        if ( permission.getLevel(plr.getTags()) >= 60 || plr.uid == -1 || !( plr.uid in bancfg ) ) return
 
         kick(plr, {
             useTemplate: false,

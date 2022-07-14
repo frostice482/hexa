@@ -20,7 +20,7 @@ pli.internalModules['checks/blacklist'] = async (b) => {
             }
             return
         }
-        if (!( plr.uid in blackcfg )) return
+        if (plr.uid == -1 || !( plr.uid in blackcfg )) return
 
         kick(plr, {
             useTemplate: false,

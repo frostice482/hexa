@@ -1,7 +1,5 @@
 import { Player } from "mojang-minecraft";
 import type { eventControl } from "../../types/se/evmngr.js";
-import { config_banlist } from "../configs/banlist.js";
-import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { config_id } from "../configs/id.js";
 import { libs_misc } from "../libs/misc.js";
@@ -10,8 +8,6 @@ import pli from "../pli.js";
 
 pli.internalModules['checks/namespoof'] = async (b) => {
     const { permission, plr, server, misc: { parseRegex } } = await b.import('se')
-    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
     const { uidOfName: icfg, nameOfUid: icfg2 } = await b.importInternal('configs/id') as Awaited<config_id>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
