@@ -5,6 +5,7 @@ import pli from "../pli.js";
 
 pli.internalModules['checks/blacklist'] = async (b) => {
     const { server, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
+    const { world } = await b.import('mc')
     const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
@@ -34,6 +35,15 @@ pli.internalModules['checks/blacklist'] = async (b) => {
     // switch event listeners
     const ad = module.ev.enable.subscribe(() => {
         server.ev.playerJoin.subscribe(aa)
+
+        for (const plr of world.getPlayers()) {
+            if (permission.getLevel(plr.getTags()) >= 60 || !( plr.uid in blackcfg)) continue
+            kick(plr, {
+                type: 'kick',
+                announceLevel: 'none',
+                reason: 'Blacklist module has been enabled'
+            })
+        }
     })
 
     const ae = module.ev.disable.subscribe(() => {
