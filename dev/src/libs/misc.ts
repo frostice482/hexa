@@ -2,6 +2,7 @@ import type { Player } from "mojang-minecraft";
 import { config_banlist } from "../configs/banlist.js";
 import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
+import { config_log } from "../configs/log.js";
 import { misc_plrjson } from "../misc/plrjson.js";
 import pli from "../pli.js";
 
@@ -18,6 +19,7 @@ export type kickConfig = {
 const aa = pli.internalModules['libs/misc'] = async (b) => {
     const { world, Player } = await b.import('mc')
     const { permission, execCmd, misc: { convertToReadableTime }, sendChat: { sendMsgToPlayers, sendMsg } } = await b.import('se')
+    const log = await b.importInternal('configs/log') as Awaited<config_log>
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
     const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
@@ -33,11 +35,15 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         useKickCommand: true
     }
 
-    const alert = (msg: string) => sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r ${msg}`)
+    const alert = (msg: string) => {
+        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r ${msg}`)
+        log.add('warn', '[System]', '[Admins]', msg)
+    }
 
     const warn = (plr: Player, moderator: Player | string = '[System]', msg: string) => {
         plr.sendMsg(`§eYou have been warned §8-§r ${msg}`)
         sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${typeof moderator == 'string' ? moderator : moderator.name}§r §gwarned§r §b${plr.name}§r: ${msg}`)
+        log.add('warn', plr, moderator, msg)
     }
 
     const kick = (plr: Player, messsage: string | string[] | kickConfig) => {
@@ -68,6 +74,9 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             if (announceLevel == 'admin') sendMsgToPlayers(getAdmins(), announceMessageConvert)
             else sendMsg('@a', announceMessageConvert)
         }
+
+        // write log
+        log.add(type, plr, moderator, reason, banDuration)
         
         // kick player
         try {
