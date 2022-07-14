@@ -40,18 +40,18 @@ export type commonSaveData = {
     }
     namespoof: {
         checkUID: boolean
-        uidMismatchActionType: 'kick' | 'ban' | 'blacklist'
+        uidMismatchActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         checkRename: boolean
-        renameActionType: 'kick' | 'ban' | 'blacklist'
+        renameActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         checkNameLength: boolean
         maxNameLength: number
-        lengthActionType: 'kick' | 'ban' | 'blacklist'
+        lengthActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         checkIllegalName: boolean
         illegalNameRegex: string
-        illegalNameActionType: 'kick' | 'ban' | 'blacklist'
+        illegalNameActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         banDuration: number
     }
@@ -62,14 +62,14 @@ export type commonSaveData = {
 
         checkStack: boolean
         defaultStackSize: number
-        stackActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        stackActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         checkEnch: boolean
-        enchActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        enchActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         checkContainerOnPlace: boolean
-        nonEmptyContainerActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
-        nestedContainerActionType: 'clear' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        nonEmptyContainerActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        nestedContainerActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
 
         renewOnPlace: boolean
         
@@ -79,7 +79,7 @@ export type commonSaveData = {
         [K in 'survival' | 'creative' | 'adventure' | 'spectator']: {
             enabled: boolean
             exclude?: string
-            actionType: 'warn' | 'kick' | 'ban' | 'blacklist'
+            actionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
             setTo: Exclude<'survival' | 'creative' | 'adventure' | 'spectator', K>
         }
     } & {
@@ -91,7 +91,7 @@ export type commonSaveData = {
         padding: number
         hardBoundary: {
             enabled: boolean
-            actionType: 'warn' | 'kick' | 'ban' | 'blacklist'
+            actionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
             banDuration: number
         }
     }
