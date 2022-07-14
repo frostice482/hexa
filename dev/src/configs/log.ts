@@ -13,7 +13,7 @@ type logData = {
     timestamp: number
     duration?: number
 
-    stringed: string
+    stringed?: string
 }
 
 const aa = pli.internalModules['configs/log'] = async (b) => {
@@ -35,7 +35,10 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
 
     const logArr: logData[] = []
     for (const [data, score] of logDataSb.getScores())
-        if (score >= logCfg.startPoint && score < logCfg.endPoint) logArr[score] = JSON.parse(data)
+        if (score >= logCfg.startPoint && score < logCfg.endPoint) {
+            logArr[score] = JSON.parse(data)
+            logArr[score].stringed = data
+        }
     
     return class Log {
         static get size() { return logArr.length }
@@ -60,9 +63,7 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
                 message,
 
                 duration,
-                timestamp: Date.now(),
-
-                stringed: null
+                timestamp: Date.now()
             }
             data.stringed = JSON.stringify(data)
 
