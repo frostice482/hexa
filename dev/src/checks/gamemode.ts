@@ -33,8 +33,7 @@ pli.internalModules['checks/gamemode'] = async (b) => {
             actionType: 'warn',
             setTo: 'survival'
         },
-        checkInterval: 1,
-        banDuration: 31449600
+        checkInterval: 1
     }
 
     const gamemodes: { gm: 'survival' | 'creative' | 'adventure' | 'spectator', code: number }[] = [
@@ -77,7 +76,7 @@ pli.internalModules['checks/gamemode'] = async (b) => {
                     case 'ban':
                         kick(plr, {
                             type: 'ban',
-                            banDuration: cfg.banDuration,
+                            banDuration: ccfg.ban.defaultDuration,
                             reason: `§cIllegal Gamemode§r ${info}`
                         })
                         continue

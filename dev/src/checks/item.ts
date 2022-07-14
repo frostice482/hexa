@@ -37,9 +37,7 @@ pli.internalModules['checks/item'] = async (b) => {
         nonEmptyContainerActionType: 'kick',
         nestedContainerActionType: 'ban',
 
-        renewOnPlace: true,
-        
-        banDuration: 31449600
+        renewOnPlace: true
     }
 
     const enchList = Object.keys(MinecraftEnchantmentTypes)
@@ -66,7 +64,7 @@ pli.internalModules['checks/item'] = async (b) => {
                 case 'ban':
                     kick(plr, {
                         type: 'ban',
-                        banDuration: cfg.banDuration,
+                        banDuration: ccfg.ban.defaultDuration,
                         reason: `§cBanned Item§r ${info}`
                     })
                     return 2
@@ -101,7 +99,7 @@ pli.internalModules['checks/item'] = async (b) => {
                 case 'ban':
                     kick(plr, {
                         type: 'ban',
-                        banDuration: cfg.banDuration,
+                        banDuration: ccfg.ban.defaultDuration,
                         reason: `§cIllegal Stack Size§r ${info}`
                     })
                     return 2
@@ -141,7 +139,7 @@ pli.internalModules['checks/item'] = async (b) => {
                         case 'ban':
                             kick(plr, {
                                 type: 'ban',
-                                banDuration: cfg.banDuration,
+                                banDuration: ccfg.ban.defaultDuration,
                                 reason: `§cIllegal Enchantment Level§r ${info}`
                             })
                             return 2
@@ -276,7 +274,7 @@ pli.internalModules['checks/item'] = async (b) => {
                         case 'ban':
                             kick(plr, {
                                 type: 'ban',
-                                banDuration: cfg.banDuration,
+                                banDuration: ccfg.ban.defaultDuration,
                                 reason: `Placed a §cnon-empty container§r ${info}`
                             })
                             return
@@ -311,7 +309,7 @@ pli.internalModules['checks/item'] = async (b) => {
                             case 'ban':
                                 kick(plr, {
                                     type: 'ban',
-                                    banDuration: cfg.banDuration,
+                                    banDuration: ccfg.ban.defaultDuration,
                                     reason: `Placed a §cnested container§r ${info}`
                                 })
                                 break itemLoop

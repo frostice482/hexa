@@ -1,8 +1,14 @@
 import pli from "../pli.js";
 
+type commonActionTypes = 'kick' | 'ban' | 'blacklist'
+type advancedActionTypes = 'alert' | 'warn' | commonActionTypes
+
 export type commonSaveData = {
     kick: {
         useKickCommand: boolean
+    }
+    ban: {
+        defaultDuration: number
     }
     combat: {
         killaura: {
@@ -36,24 +42,21 @@ export type commonSaveData = {
             }
         }
         vcCooldownInterval: number
-        banDuration: number
     }
     namespoof: {
         checkUID: boolean
-        uidMismatchActionType: 'kick' | 'ban' | 'blacklist'
+        uidMismatchActionType: commonActionTypes
 
         checkRename: boolean
-        renameActionType: 'kick' | 'ban' | 'blacklist'
+        renameActionType: commonActionTypes
 
         checkNameLength: boolean
         maxNameLength: number
-        lengthActionType: 'kick' | 'ban' | 'blacklist'
+        lengthActionType: commonActionTypes
 
         checkIllegalName: boolean
         illegalNameRegex: string
-        illegalNameActionType: 'kick' | 'ban' | 'blacklist'
-
-        banDuration: number
+        illegalNameActionType: commonActionTypes
     }
     illegalItem: {
         checkInterval: number
@@ -62,37 +65,33 @@ export type commonSaveData = {
 
         checkStack: boolean
         defaultStackSize: number
-        stackActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        stackActionType: 'clear' | advancedActionTypes
 
         checkEnch: boolean
-        enchActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        enchActionType: 'clear' | advancedActionTypes
 
         checkContainerOnPlace: boolean
-        nonEmptyContainerActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
-        nestedContainerActionType: 'clear' | 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        nonEmptyContainerActionType: 'clear' | advancedActionTypes
+        nestedContainerActionType: 'clear' | advancedActionTypes
 
         renewOnPlace: boolean
-        
-        banDuration: number
     }
     gamemode: {
         [K in 'survival' | 'creative' | 'adventure' | 'spectator']: {
             enabled: boolean
             exclude?: string
-            actionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+            actionType: advancedActionTypes
             setTo: Exclude<'survival' | 'creative' | 'adventure' | 'spectator', K>
         }
     } & {
         checkInterval: number
-        banDuration: number
     }
     boundary: {
         checkInterval: number
         padding: number
         hardBoundary: {
             enabled: boolean
-            actionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
-            banDuration: number
+            actionType: advancedActionTypes
         }
     }
 }

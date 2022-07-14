@@ -25,7 +25,6 @@ pli.internalModules['checks/boundary'] = async (b) => {
         hardBoundary: {
             enabled: true,
             actionType: 'ban',
-            banDuration: 31449600,
         }
     }
 
@@ -67,7 +66,7 @@ pli.internalModules['checks/boundary'] = async (b) => {
                     case 'ban':
                         kick(plr, {
                             type: 'ban',
-                            banDuration: cfg.hardBoundary.banDuration,
+                            banDuration: ccfg.ban.defaultDuration,
                             reason: `§cOutside Hard Boundary§r ${info}`
                         })
                         continue

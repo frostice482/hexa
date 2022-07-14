@@ -32,9 +32,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
 
         checkIllegalName: true,
         illegalNameRegex: '/["\\\\]/',
-        illegalNameActionType: 'ban',
-
-        banDuration: 31449600
+        illegalNameActionType: 'ban'
     }
 
     let illegalNameRegex = parseRegex( cfg.illegalNameRegex )
@@ -46,7 +44,7 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     const begone = (plr: Player, ctrl: eventControl, reason: string, type: 'kick' | 'ban' | 'blacklist') => {
         kick(plr, {
             type,
-            banDuration: cfg.banDuration,
+            banDuration: ccfg.ban.defaultDuration,
             reason: reason,
         })
         ctrl.break()

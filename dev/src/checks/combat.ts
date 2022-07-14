@@ -400,7 +400,6 @@ pli.internalModules['checks/combat'] = async (b) => {
             }
         },
         vcCooldownInterval: 2000,
-        banDuration: 31449600
     }
 
     const aa = world.events.entityHit.subscribe(({entity: plr, hitEntity: target}) => {
@@ -445,10 +444,10 @@ pli.internalModules['checks/combat'] = async (b) => {
                 const info = `§7Combat§8:§cKillaura§r §7(x${pdata.killaura.count})§r`
 
                 if (cfg.killaura.actionThresholds.ban && pdata.killaura.count > cfg.killaura.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: cfg.banDuration,
+                        banDuration: ccfg.ban.defaultDuration,
                         reason: info
                     })
                     vcList.delete(plr)
@@ -474,10 +473,10 @@ pli.internalModules['checks/combat'] = async (b) => {
                 const info = `§7Combat§8:§cReach§r §7(x${pdata.reach.count})§r §8(dist: §2${dist.toFixed(2)}bl§8)`
 
                 if (cfg.reach.actionThresholds.ban && pdata.reach.count > cfg.reach.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: cfg.banDuration,
+                        banDuration: ccfg.ban.defaultDuration,
                         reason: info
                     })
                     vcList.delete(plr)
@@ -514,10 +513,10 @@ pli.internalModules['checks/combat'] = async (b) => {
                 const info = `§7Combat§8:§cAutoclicker§r §7(x${pdata.autoclicker.count})§r §8(avg ${cpsArr.length}: §2${avg.toFixed(2)}cps§8, max ${cpsArr.length}: §2${max.toFixed(2)}cps§8)`
 
                 if (cfg.autoclicker.actionThresholds.ban && pdata.autoclicker.count > cfg.autoclicker.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
                     kick(plr, {
                         type: 'ban',
-                        banDuration: cfg.banDuration,
+                        banDuration: ccfg.ban.defaultDuration,
                         reason: info
                     })
                     vcList.delete(plr)
