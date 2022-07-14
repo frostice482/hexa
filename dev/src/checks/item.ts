@@ -1,6 +1,4 @@
 import type { BlockInventoryComponentContainer, InventoryComponentContainer, ItemStack, Player } from "mojang-minecraft";
-import { config_banlist } from "../configs/banlist.js";
-import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { config_itemban } from "../configs/itemban.js";
 import { config_maxench } from "../configs/maxench.js";
@@ -11,16 +9,14 @@ import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
 pli.internalModules['checks/item'] = async (b) => {
-    const { permission, sendChat: { sendMsgToPlayers }, execCmd, Area } = await b.import('se')
+    const { permission, execCmd, Area } = await b.import('se')
     const { world, MinecraftEnchantmentTypes, ItemStack, MinecraftItemTypes, Player, EntityQueryOptions } = await b.import('mc')
-    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ibcfg = await b.importInternal('configs/itemban') as Awaited<config_itemban>
     const mecfg = await b.importInternal('configs/maxench') as Awaited<config_maxench>
     const mscfg = await b.importInternal('configs/maxstack') as Awaited<config_maxstack>
     const rcfg = await b.importInternal('configs/renewable') as Awaited<config_renewable>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
-    const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
+    const { alert, warn, kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('illegalitem', 'IllegalItem', true)
@@ -53,37 +49,34 @@ pli.internalModules['checks/item'] = async (b) => {
         // check item ban
         if ( cfg.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
             c.setItem(index, air)
-            const info = `§cBanned item§r §8(Item: §2${i.id}§8, data: §2${i.data}§8)`
+            const info = `§8(Item: §2${i.id}§8, data: §2${i.data}§8)`
             switch (ibcfg[i.id].action) {
-                // case 'clear': {}; break
+                case 'alert':
+                    alert(`§b${plr.name}§r has a §cbanned item§r! ${info}`)
+                    break
 
-                case 'warn': {
-                    sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
-                }; break
+                case 'warn':
+                    warn(plr, undefined, `You have a §cbanned item§r! ${info}`)
+                    break
 
-                case 'kick': {
-                    kick(plr, info)
+                case 'kick':
+                    kick(plr, `§cBanned Item§r ${info}`)
                     return 2
-                }; break
 
-                case 'ban': {
-                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                case 'ban':
                     kick(plr, {
                         type: 'ban',
                         banDuration: cfg.banDuration,
-                        reason: info
+                        reason: `§cBanned Item§r ${info}`
                     })
                     return 2
-                }; break
 
-                case 'blacklist': {
-                    blcfg[plr.uid] = plr.uid
+                case 'blacklist':
                     kick(plr, {
                         type: 'blacklist',
-                        reason: info
+                        reason: `§cBanned Item§r ${info}`
                     })
                     return 2
-                }; break
             }
             return 1
         }
@@ -91,37 +84,34 @@ pli.internalModules['checks/item'] = async (b) => {
         // check stack
         if ( cfg.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? cfg.defaultStackSize ) ) ) {
             c.setItem(index, air)
-            const info = `§cIllegal stack size§r §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`
+            const info = `§8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`
             switch (cfg.stackActionType) {
-                // case 'clear': {}; break
+                case 'alert':
+                    alert(`§b${plr.name}§r has an item with §cillegal stack size§r! ${info}`)
+                    break
 
-                case 'warn': {
-                    sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
-                }; break
+                case 'warn':
+                    warn(plr, undefined, `You have an item with §cillegal stack size§r! ${info}`)
+                    break
 
-                case 'kick': {
-                    kick(plr, info)
+                case 'kick':
+                    kick(plr, `§cIllegal Stack Size§r ${info}`)
                     return 2
-                }; break
 
-                case 'ban': {
-                    bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                case 'ban':
                     kick(plr, {
                         type: 'ban',
                         banDuration: cfg.banDuration,
-                        reason: info
+                        reason: `§cIllegal Stack Size§r ${info}`
                     })
                     return 2
-                }; break
 
-                case 'blacklist': {
-                    blcfg[plr.uid] = plr.uid
+                case 'blacklist':
                     kick(plr, {
                         type: 'blacklist',
-                        reason: info
+                        reason: `§cIllegal Stack Size§r ${info}`
                     })
                     return 2
-                }; break
             }
             return 1
         }
@@ -134,37 +124,34 @@ pli.internalModules['checks/item'] = async (b) => {
                 const maxLevel = slotMaxLevel[id] ?? 0
                 if ( level < 0 || level > maxLevel) {
                     c.setItem(index, air)
-                    const info = `§cIllegal enchantment§r §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`
+                    const info = `§8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`
                     switch (cfg.enchActionType) {
-                        // case 'clear': {}; break
-
-                        case 'warn': {
-                            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
-                        }; break
-
-                        case 'kick': {
-                            kick(plr, info)
+                        case 'alert':
+                            alert(`§b${plr.name}§r has an item with §cillegal enchantment level§r! ${info}`)
+                            break
+        
+                        case 'warn':
+                            warn(plr, undefined, `You have an item with §cillegal enchantment level§r! ${info}`)
+                            break
+        
+                        case 'kick':
+                            kick(plr, `§cIllegal Enchantment Level§r ${info}`)
                             return 2
-                        }; break
-
-                        case 'ban': {
-                            bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+        
+                        case 'ban':
                             kick(plr, {
                                 type: 'ban',
                                 banDuration: cfg.banDuration,
-                                reason: info
+                                reason: `§cIllegal Enchantment Level§r ${info}`
                             })
                             return 2
-                        }; break
-
-                        case 'blacklist': {
-                            blcfg[plr.uid] = plr.uid
+        
+                        case 'blacklist':
                             kick(plr, {
                                 type: 'blacklist',
-                                reason: info
+                                reason: `§cIllegal Enchantment Level§r ${info}`
                             })
                             return 2
-                        }; break
                     }
                     return 1
                 }
@@ -211,19 +198,19 @@ pli.internalModules['checks/item'] = async (b) => {
             closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
 
         if ( cfg.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
-            sendMsgToPlayers(getAdmins(), [
+            alert([
                 `§6[§eHEXA§6]§r A §cbanned item§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
                 closestPlrInfo
-            ])
+            ].join('\n\u00a7r'))
             entity.kill()
             return
         }
 
         if ( cfg.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? cfg.defaultStackSize ) ) ) {
-            sendMsgToPlayers(getAdmins(), [
+            alert([
                 `§6[§eHEXA§6]§r An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`,
                 closestPlrInfo
-            ])
+            ].join('\n\u00a7r'))
             entity.kill()
             return
         }
@@ -235,10 +222,10 @@ pli.internalModules['checks/item'] = async (b) => {
                 for (const { level, type: { id } } of e) {
                     const maxLevel = slotMaxLevel[id] ?? 0
                     if ( level < 0 || level > maxLevel) {
-                        sendMsgToPlayers(getAdmins(), [
+                        alert([
                             `§6[§eHEXA§6]§r An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`,
                             closestPlrInfo
-                        ])
+                        ].join('\n\u00a7r'))
                         entity.kill()
                         return
                     }
@@ -253,8 +240,7 @@ pli.internalModules['checks/item'] = async (b) => {
     const ad = world.events.blockPlace.subscribe(({block, player: plr, dimension}) => {
         if (permission.getLevel(plr.getTags()) >= 60) return
 
-        const blLoc = `${Area.toLocationArray(block.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${plr.dimension.id}§8)`,
-            blLocGray = `${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§8)`
+        const blLocGray = `${Area.toLocationArray(block.location).map(v => `§2${Math.floor(v)}§8`).join(', ')} (§2${plr.dimension.id}§8)`
 
         const {x, y, z} = block
 
@@ -272,79 +258,70 @@ pli.internalModules['checks/item'] = async (b) => {
                     execCmd(`kill @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=!_temp]`, dimension, true)
                     execCmd(`tag @e[x=${x},y=${y},z=${z},dx=0,dy=0,dz=0,type=item,tag=_temp] remove _temp`, dimension, true)
 
-                    const info = `placed a §cnon-empty container§r §8(at ${blLocGray})`
+                    const info = `§8(at ${blLocGray})`
 
                     switch (cfg.nonEmptyContainerActionType) {
-                        // case 'clear': {}; break
-
-                        case 'warn': {
-                            sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnon-empty container§r at ${blLoc}!`)
-                        }; break
-
-                        case 'kick': {
-                            kick(plr, info)
+                        case 'alert':
+                            alert(`§b${plr.name}§r placed a §cnon-empty container§r! ${info}`)
+                            break
+        
+                        case 'warn':
+                            warn(plr, undefined, `You placed a §cnon-empty container§r! ${info}`)
+                            break
+        
+                        case 'kick':
+                            kick(plr, `Placed a §cnon-empty container§r ${info}`)
                             return
-                        }; break
-
-                        case 'ban': {
-                            bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+        
+                        case 'ban':
                             kick(plr, {
                                 type: 'ban',
                                 banDuration: cfg.banDuration,
-                                reason: info
+                                reason: `Placed a §cnon-empty container§r ${info}`
                             })
                             return
-                        }; break
-
-                        case 'blacklist': {
-                            blcfg[plr.uid] = plr.uid
+        
+                        case 'blacklist':
                             kick(plr, {
                                 type: 'blacklist',
-                                reason: info
+                                reason: `Placed a §cnon-empty container§r ${info}`
                             })
                             return
-                        }; break
                     }
                     return
                 } else {
                     if (i.id == 'minecraft:shulker_box' || i.id == 'minecraft:undyed_shulker_box') {
                         c.setItem(ix, air)
 
-                        const info = `placed a §cnested container§r §8(at ${blLocGray})`
+                        const info = `§8(at ${blLocGray})`
 
                         switch (cfg.nestedContainerActionType) {
-                            // case 'clear': {}; break
-
-                            case 'warn': {
-                                sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r placed a §cnested container§r at ${blLoc}!`)
-                            }; break
-
-                            case 'kick': {
-                                kick(plr, info)
-                                clr = true
+                            case 'alert':
+                                alert(`§b${plr.name}§r placed a §cnested container§r! ${info}`)
+                                break
+            
+                            case 'warn':
+                                warn(plr, undefined, `You placed a §cnested container§r! ${info}`)
+                                break
+            
+                            case 'kick':
+                                kick(plr, `Placed a §cnested container§r ${info}`)
                                 break itemLoop
-                            }; break
-
-                            case 'ban': {
-                                bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+            
+                            case 'ban':
                                 kick(plr, {
                                     type: 'ban',
                                     banDuration: cfg.banDuration,
-                                    reason: info
+                                    reason: `Placed a §cnested container§r ${info}`
                                 })
-                                clr = true
                                 break itemLoop
-                            }; break
-
-                            case 'blacklist': {
-                                blcfg[plr.uid] = plr.uid
+            
+                            case 'blacklist':
                                 kick(plr, {
                                     type: 'blacklist',
-                                    reason: info
+                                    reason: `Placed a §cnested container§r ${info}`
                                 })
-                                clr = true
                                 break itemLoop
-                            }; break
                         }
                     }
                     if (scanItem(plr, ix, i, c) == 2) {

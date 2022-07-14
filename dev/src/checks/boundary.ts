@@ -1,7 +1,5 @@
 import type { Player } from "mojang-minecraft";
 import type Area from "../../types/se/area.js";
-import { config_banlist } from "../configs/banlist.js";
-import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { config_hardboundary } from "../configs/hardboundary.js";
 import { config_worldboundary } from "../configs/worldboundary.js";
@@ -11,14 +9,12 @@ import pli from "../pli.js";
 import { pos3, sign } from "./combat.js";
 
 pli.internalModules['checks/boundary'] = async (b) => {
-    const { permission, sendChat: { sendMsgToPlayers }, Area } = await b.import('se')
+    const { permission, Area } = await b.import('se')
     const { world } = await b.import('mc')
-    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
     const hbcfg = await b.importInternal('configs/hardboundary') as Awaited<config_hardboundary>
     const wbcfg = await b.importInternal('configs/worldboundary') as Awaited<config_worldboundary>
-    const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
+    const { alert, warn, kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('boundary', 'Boundary', true)
@@ -52,37 +48,36 @@ pli.internalModules['checks/boundary'] = async (b) => {
             const locArr = Area.toLocationArray(plr.location)
 
             if (cfg.hardBoundary.enabled && !hbcfg.isInside(locArr)) {
-                const info = `§cOutside Hard Boundary§r §8(at ${ locArr.map(v => `§a${Math.floor(v)}§8`).join(', ') } (§a${plr.dimension.id}§8))`
+                const info = `§8(at ${ locArr.map(v => `§a${Math.floor(v)}§8`).join(', ') } (§a${plr.dimension.id}§8))`
                 tp(wbcfg, plr)
 
                 switch (cfg.hardBoundary.actionType) {
-                    case 'warn': {
-                        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r is ${info}`)
-                    }; break
+                    case 'alert':
+                        alert(`§b${plr.name}§r is §coutside hard boundary§r! ${info}`)
+                        break
 
-                    case 'kick': {
-                        kick(plr, info)
+                    case 'warn':
+                        warn(plr, undefined, `You are §coutside hard boundary§r! ${info}`)
+                        break
+
+                    case 'kick':
+                        kick(plr, `§cOutside Hard Boundary§r ${info}`)
                         continue
-                    }; break
 
-                    case 'ban': {
-                        bancfg[plr.uid] = Date.now() + cfg.hardBoundary.banDuration * 1000
+                    case 'ban':
                         kick(plr, {
                             type: 'ban',
                             banDuration: cfg.hardBoundary.banDuration,
-                            reason: info
+                            reason: `§cOutside Hard Boundary§r ${info}`
                         })
                         continue
-                    }
 
-                    case 'blacklist': {
-                        blcfg[plr.uid] = plr.uid
+                    case 'blacklist':
                         kick(plr, {
                             type: 'blacklist',
-                            reason: info
+                            reason: `§cOutside Hard Boundary§r ${info}`
                         })
                         continue
-                    }; break
                 }
             }
 

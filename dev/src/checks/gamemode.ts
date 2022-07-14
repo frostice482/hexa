@@ -1,17 +1,13 @@
-import { config_banlist } from "../configs/banlist.js";
-import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
 pli.internalModules['checks/gamemode'] = async (b) => {
-    const { permission, execCmd, sendChat: { sendMsgToPlayers } } = await b.import('se')
+    const { permission, execCmd } = await b.import('se')
     const { world, EntityQueryOptions } = await b.import('mc')
-    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
-    const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
+    const { alert, warn, kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('gamemode', 'Gamemode', true)
@@ -63,36 +59,35 @@ pli.internalModules['checks/gamemode'] = async (b) => {
                 if ( exclude.includes(plr.name) || permission.getLevel(plr.getTags()) >= 60 ) continue
 
                 execCmd(`gamemode ${gcfg.setTo}`, plr)
-                const info = `§cBanned Gamemode§r §8(gm: §2${gm}§8)`
+                const info = `§8(gm: §2${gm}§8)`
 
                 switch (gcfg.actionType) {
-                    case 'warn': {
-                        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
-                    }; break
+                    case 'alert':
+                        alert(`§b${plr.name}§r has §cillegal gamemode§r! ${info}`)
+                        break
 
-                    case 'kick': {
-                        kick(plr, info)
+                    case 'warn':
+                        warn(plr, undefined, `You have §cillegal gamemode§r! ${info}`)
+                        break
+
+                    case 'kick':
+                        kick(plr, `§cIllegal Gamemode§r ${info}`)
                         continue
-                    }; break
 
-                    case 'ban': {
-                        bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
+                    case 'ban':
                         kick(plr, {
                             type: 'ban',
                             banDuration: cfg.banDuration,
-                            reason: info
+                            reason: `§cIllegal Gamemode§r ${info}`
                         })
                         continue
-                    }
 
-                    case 'blacklist': {
-                        blcfg[plr.uid] = plr.uid
+                    case 'blacklist':
                         kick(plr, {
                             type: 'blacklist',
-                            reason: info
+                            reason: `§cIllegal Gamemode§r ${info}`
                         })
                         continue
-                    }; break
                 }
             }
         }
