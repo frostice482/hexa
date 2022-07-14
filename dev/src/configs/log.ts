@@ -71,13 +71,14 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
 
             logCfg.endPoint++
             if (logArr.push(data) > logCfg.maxSize) {
-                logArr.shift()
+                const data = logArr.shift()
+                if (data) logDataSb.delete(data.stringed)
                 logCfg.startPoint++
             }
         }
 
         static readonly iterate = function*() {
-            for (let i = logArr.length - 1; i >= 0; i--) yield logArr[i]
+            for (let i = logArr.length - 1; i >= 0; i--) if (logArr[i]) yield logArr[i]
         }
     }
 }
