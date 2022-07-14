@@ -40,18 +40,18 @@ export type commonSaveData = {
     }
     namespoof: {
         checkUID: boolean
-        uidMismatchActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        uidMismatchActionType: 'kick' | 'ban' | 'blacklist'
 
         checkRename: boolean
-        renameActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        renameActionType: 'kick' | 'ban' | 'blacklist'
 
         checkNameLength: boolean
         maxNameLength: number
-        lengthActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        lengthActionType: 'kick' | 'ban' | 'blacklist'
 
         checkIllegalName: boolean
         illegalNameRegex: string
-        illegalNameActionType: 'alert' | 'warn' | 'kick' | 'ban' | 'blacklist'
+        illegalNameActionType: 'kick' | 'ban' | 'blacklist'
 
         banDuration: number
     }

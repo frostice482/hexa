@@ -36,7 +36,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
     const alert = (msg: string) => sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r ${msg}`)
 
     const warn = (plr: Player, moderator: Player | string = '[System]', msg: string) => {
-        plr.sendMsg(`§eYou have been warned! ${msg}`)
+        plr.sendMsg(`§eYou have been warned §8-§r ${msg}`)
         sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${typeof moderator == 'string' ? moderator : moderator.name}§r §gwarned§r §b${plr.name}§r: ${msg}`)
     }
 

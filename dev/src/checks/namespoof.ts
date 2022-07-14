@@ -44,8 +44,6 @@ pli.internalModules['checks/namespoof'] = async (b) => {
     })
 
     const begone = (plr: Player, ctrl: eventControl, reason: string, type: 'kick' | 'ban' | 'blacklist') => {
-        if (type == 'ban') bancfg[plr.uid] = Date.now() + cfg.banDuration * 1000
-        if (type == 'blacklist') blackcfg[plr.uid] = 0
         kick(plr, {
             type,
             banDuration: cfg.banDuration,
