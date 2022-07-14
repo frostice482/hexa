@@ -21,13 +21,27 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
     const { permission, execCmd, misc: { convertToReadableTime }, sendChat: { sendMsgToPlayers, sendMsg } } = await b.import('se')
     const log = await b.importInternal('configs/log') as Awaited<config_log>
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
+    const { config: blcfg } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
 
     const getAdmins = function* (excludeAdmins: Player[] = [], minLevel = 60) {
         for (const plr of world.getPlayers())
             if (!excludeAdmins.includes(plr) && permission.getLevel(plr.getTags()) >= minLevel)
                 yield plr
+    }
+
+    const parseTimeFormat = (f: string) => {
+        if (!/^(\d+[smhdwy][,_]?)+$/.test(f)) throw new SyntaxError(`'${f}' is not a valid time format`)
+        const timeDefs = {
+            s: 1000,
+            m: 60000,
+            d: 86400000,
+            w: 604800000,
+            y: 31536000000
+        }
+        let exec: RegExpExecArray, rx = /(\d+)([smhdwy])/g, t = 0
+        while (exec = rx.exec(f)) t += timeDefs[exec[2]] * +exec[1]
+        return t
     }
 
     // --- kick ---
@@ -113,7 +127,8 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         alert,
         warn,
         kick,
-        getAdmins
+        getAdmins,
+        parseTimeFormat
     }
 }
 
