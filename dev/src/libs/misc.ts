@@ -1,4 +1,6 @@
 import type { Player } from "mojang-minecraft";
+import { config_banlist } from "../configs/banlist.js";
+import { config_blacklist } from "../configs/blacklist.js";
 import { config_common } from "../configs/common.js";
 import { misc_plrjson } from "../misc/plrjson.js";
 import pli from "../pli.js";
@@ -16,6 +18,8 @@ export type kickConfig = {
 const aa = pli.internalModules['libs/misc'] = async (b) => {
     const { world, Player } = await b.import('mc')
     const { permission, execCmd, misc: { convertToReadableTime }, sendChat: { sendMsgToPlayers, sendMsg } } = await b.import('se')
+    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
+    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
 
     const getAdmins = function* (excludeAdmins: Player[] = [], minLevel = 60) {
@@ -49,16 +53,23 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             : Array.isArray(messsage) ? { useTemplate: false, reason: messsage.join('\n§r') }
             : messsage
 
+        // registry for ban & blacklist
+        if (type == 'ban') bancfg[plr.uid] = Date.now() + banDuration * 1000
+        if (type == 'blacklist') blcfg[plr.uid] = plr.uid
+
+        // kick message
         const kickType = type == 'blacklist' ? '§4blacklisted§r' : type == 'ban' ? '§cbanned§r' : '§ekicked§r', 
             modName = typeof moderator == 'string' ? moderator : moderator.name,
             aa = `from${ type != 'kick' ? ' playing in ' : ' ' }this server${ type == 'ban' ? ` for §a${convertToReadableTime(banDuration, false)}§r` : '' }`
         
+        // kick announce
         if (announceLevel != 'none') {
             const announceMessageConvert = announceMessage || `§6[§eHEXA§6]§r §b${modName}§r ${kickType} §b${plr.name}§r ${aa}: ${reason}`
             if (announceLevel == 'admin') sendMsgToPlayers(getAdmins(), announceMessageConvert)
             else sendMsg('@a', announceMessageConvert)
         }
         
+        // kick player
         try {
             if (usePlayerJson && !ccfg.kick.useKickCommand) throw 0
             execCmd(`kick ${JSON.stringify(plr.name)} ${ useTemplate ? [ `You have been ${kickType} ${aa}.`, `Moderator: §b${modName}`, `Reason: ${reason}` ].join('\n§r') : reason} `)
