@@ -118,6 +118,10 @@ const aa = pli.internalModules['configs/common'] = async (b) => {
     })
     saveData.ev.save.subscribe((data) => data.save = obj)
 
+    obj.ban ??= {
+        defaultDuration: 31449600
+    }
+
     const aa = b.ev.unload.subscribe(() => {
         saveData.autosaveInterval = 0
         b.ev.unload.unsubscribe(aa)
