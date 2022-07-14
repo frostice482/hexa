@@ -29,6 +29,13 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         useKickCommand: true
     }
 
+    const alert = (msg: string) => sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r ${msg}`)
+
+    const warn = (plr: Player, moderator: Player | string = '[System]', msg: string) => {
+        plr.sendMsg(`§eYou have been warned! ${msg}`)
+        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${typeof moderator == 'string' ? moderator : moderator.name}§r §gwarned§r §b${plr.name}§r: ${msg}`)
+    }
+
     const kick = (plr: Player, messsage: string | string[] | kickConfig) => {
         const {
             useTemplate = true,
@@ -83,6 +90,8 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
     })
 
     return {
+        alert,
+        warn,
         kick,
         getAdmins
     }
