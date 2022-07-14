@@ -192,23 +192,16 @@ pli.internalModules['checks/item'] = async (b) => {
         const closestPlrName = execCmd('testfor @p', entity, true).victim?.[0],
             [closestPlr] = closestPlrName ? world.getPlayers( Object.assign( new EntityQueryOptions, { name: closestPlrName } ) ) : []
         
-        const blLoc = `${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)`,
-            closestPlrInfo = `Closest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`
+        const blLoc = `${Area.toLocationArray(entity.location).map(v => `§a${Math.floor(v)}§r`).join(', ')} (§a${entity.dimension.id}§r)`
 
         if ( cfg.checkItemBan && i.id in ibcfg && ( i.data in ibcfg[i.id].data || -1 in ibcfg[i.id].data ) ) {
-            alert([
-                `§6[§eHEXA§6]§r A §cbanned item§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, data: §2${i.data}§8)`,
-                closestPlrInfo
-            ].join('\n\u00a7r'))
+            alert(`A §cbanned item§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, data: §2${i.data}§8)§r \nClosest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`)
             entity.kill()
             return
         }
 
         if ( cfg.checkStack && ( i.amount < 0 || i.amount > ( mscfg[i.id] ?? cfg.defaultStackSize ) ) ) {
-            alert([
-                `§6[§eHEXA§6]§r An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)`,
-                closestPlrInfo
-            ].join('\n\u00a7r'))
+            alert(`An §cillegal stack size§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, stack: §2${i.amount}§8, maximum: §2${mscfg[i.id] ?? cfg.defaultStackSize}§8)§r \nClosest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`)
             entity.kill()
             return
         }
@@ -220,10 +213,7 @@ pli.internalModules['checks/item'] = async (b) => {
                 for (const { level, type: { id } } of e) {
                     const maxLevel = slotMaxLevel[id] ?? 0
                     if ( level < 0 || level > maxLevel) {
-                        alert([
-                            `§6[§eHEXA§6]§r An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)`,
-                            closestPlrInfo
-                        ].join('\n\u00a7r'))
+                        alert(`An §cillegal enchantment§r has been dropped at ${blLoc}! §8(Item: §2${i.id}§8, enchantment: §2${id}§8, level: §2${level}§8, maximum: §2${maxLevel}§8)§r \nClosest player: §b${closestPlr?.name ?? '§7(unknown)'}§r`)
                         entity.kill()
                         return
                     }
