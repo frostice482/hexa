@@ -36,8 +36,9 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
     const logArr: logData[] = []
     for (const [data, score] of logDataSb.getScores())
         if (score >= logCfg.startPoint && score < logCfg.endPoint) {
-            logArr[score] = JSON.parse(data)
-            logArr[score].stringed = data
+            const d = JSON.parse(data)
+            d.stringed = data
+            logArr.push(d)
         }
     
     return class Log {
