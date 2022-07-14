@@ -15,22 +15,22 @@ pli.internalModules['checks/gamemode'] = async (b) => {
     const cfg = ccfg.gamemode ??= {
         survival: {
             enabled: false,
-            actionType: 'warn',
+            actionType: 'alert',
             setTo: 'adventure'
         },
         creative: {
             enabled: true,
-            actionType: 'warn',
+            actionType: 'alert',
             setTo: 'survival'
         },
         adventure: {
             enabled: false,
-            actionType: 'warn',
+            actionType: 'alert',
             setTo: 'survival'
         },
         spectator: {
             enabled: true,
-            actionType: 'warn',
+            actionType: 'alert',
             setTo: 'survival'
         },
         checkInterval: 1

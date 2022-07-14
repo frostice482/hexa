@@ -24,15 +24,15 @@ pli.internalModules['checks/namespoof'] = async (b) => {
         uidMismatchActionType: 'kick',
 
         checkRename: true,
-        renameActionType: 'ban',
+        renameActionType: 'blacklist',
 
         checkNameLength: true,
         maxNameLength: 16,
-        lengthActionType: 'ban',
+        lengthActionType: 'blacklist',
 
         checkIllegalName: true,
         illegalNameRegex: '/["\\\\]/',
-        illegalNameActionType: 'ban'
+        illegalNameActionType: 'blacklist'
     }
 
     let illegalNameRegex = parseRegex( cfg.illegalNameRegex )

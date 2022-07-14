@@ -28,14 +28,14 @@ pli.internalModules['checks/item'] = async (b) => {
 
         checkStack: true,
         defaultStackSize: 64,
-        stackActionType: 'ban',
+        stackActionType: 'blacklist',
 
         checkEnch: true,
-        enchActionType: 'ban',
+        enchActionType: 'blacklist',
 
         checkContainerOnPlace: true,
         nonEmptyContainerActionType: 'kick',
-        nestedContainerActionType: 'ban',
+        nestedContainerActionType: 'blacklist',
 
         renewOnPlace: true
     }
