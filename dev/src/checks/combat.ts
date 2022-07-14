@@ -1,5 +1,4 @@
 import type { Player } from "mojang-minecraft"
-import { config_banlist } from "../configs/banlist.js"
 import { config_common } from "../configs/common.js"
 import { libs_misc } from "../libs/misc.js"
 import { libs_module } from "../libs/module.js"
@@ -364,9 +363,8 @@ pli.internalModules['checks/combat'] = async (b) => {
     const { Area, permission, server, sendChat: { sendMsgToPlayers } } = await b.import('se')
     const { world, Player } = await b.import('mc')
     const kaCalc = await b.importInternal('checks/combat:kaCalc') as kaCalc
-    const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
-    const { getAdmins, kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
+    const { alert, warn, kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
     
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = new Module('combat', 'Combat', true)
@@ -376,27 +374,30 @@ pli.internalModules['checks/combat'] = async (b) => {
             check: true,
             tolerance: [0, 0],
             actionThresholds: {
+                alert: 0,
                 warn: 3,
-                kick: 0,
-                ban: 6,
+                kick: 8,
+                ban: 0
             }
         },
         reach: {
             check: true,
             threshold: 4,
             actionThresholds: {
+                alert: 0,
                 warn: 3,
-                kick: 0,
-                ban: 6
+                kick: 8,
+                ban: 0
             }
         },
         autoclicker: {
             check: true,
             threshold: 20,
             actionThresholds: {
+                alert: 0,
                 warn: 3,
-                kick: 0,
-                ban: 6
+                kick: 8,
+                ban: 0
             }
         },
         vcCooldownInterval: 2000,
@@ -439,27 +440,27 @@ pli.internalModules['checks/combat'] = async (b) => {
             vMax += vTol
     
             if (!( ( vMin <= vRot && vRot <= vMax ) && ( hMin < hMax ? hMin <= hRot && hRot <= hMax : hMin <= hRot || hRot <= hMax ) )) {
-                pdata.killaura.count++
+                const c = ++pdata.killaura.count, at = cfg.killaura.actionThresholds
 
-                const info = `§7Combat§8:§cKillaura§r §7(x${pdata.killaura.count})§r`
-
-                if (cfg.killaura.actionThresholds.ban && pdata.killaura.count > cfg.killaura.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
+                if (at.ban && c >= at.ban) {
                     kick(plr, {
                         type: 'ban',
                         banDuration: ccfg.ban.defaultDuration,
-                        reason: info
+                        reason: `§7Combat§8/§cKillaura§r §7(x${c})§r`
                     })
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.killaura.actionThresholds.kick && pdata.killaura.count > cfg.killaura.actionThresholds.kick) {
-                    kick(plr, info)
+                if (at.kick && c >= at.kick) {
+                    kick(plr, `§7Combat§8/§cKillaura§r §7(x${c})§r`)
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.killaura.actionThresholds.warn && pdata.killaura.count > cfg.killaura.actionThresholds.warn) {
-                    sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
+                if (at.warn && c >= at.warn) {
+                    warn(plr, undefined, `You have §ckillaura§r enabled! §7(x${c})§r`)
+                }
+                if (at.warn && c >= at.alert) {
+                    alert(`§b${plr.name}§r has §7Combat§8/§cKillaura§r! §7(x${c})§r`)
                 }
             }
         }
@@ -468,27 +469,28 @@ pli.internalModules['checks/combat'] = async (b) => {
         if (cfg.reach.check) {
             const dist = targetHitbox.getClosestDistance(targetLocArr)
             if (dist > cfg.reach.threshold) {
-                pdata.reach.count++
+                const c = ++pdata.reach.count, at = cfg.reach.actionThresholds
+                const info = `§8(dist: §2${dist.toFixed(2)}bl§8)`
 
-                const info = `§7Combat§8:§cReach§r §7(x${pdata.reach.count})§r §8(dist: §2${dist.toFixed(2)}bl§8)`
-
-                if (cfg.reach.actionThresholds.ban && pdata.reach.count > cfg.reach.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
+                if (at.ban && c >= at.ban) {
                     kick(plr, {
                         type: 'ban',
                         banDuration: ccfg.ban.defaultDuration,
-                        reason: info
+                        reason: `§7Combat§8/§cReach§r §7(x${c})§r ${info}`
                     })
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.reach.actionThresholds.kick && pdata.reach.count > cfg.reach.actionThresholds.kick) {
-                    kick(plr, info)
+                if (at.kick && c >= at.kick) {
+                    kick(plr, `§7Combat§8/§cReach§r §7(x${c})§r ${info}`)
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.reach.actionThresholds.warn && pdata.reach.count > cfg.reach.actionThresholds.warn) {
-                    sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
+                if (at.warn && c >= at.warn) {
+                    warn(plr, undefined, `You have §cReach§r enabled! §7(x${c})§r ${info}`)
+                }
+                if (at.warn && c >= at.alert) {
+                    alert(`§b${plr.name}§r has §7Combat§8/§cReach§r! §7(x${c})§r ${info}`)
                 }
             }
         }
@@ -508,27 +510,28 @@ pli.internalModules['checks/combat'] = async (b) => {
                 max = Math.max(...cpsArr)
 
             if (avg > cfg.autoclicker.threshold) {
-                pdata.autoclicker.count++
+                const c = ++pdata.autoclicker.count, at = cfg.autoclicker.actionThresholds
+                const info = `§8(avg ${cpsArr.length}: §2${avg.toFixed(2)}cps§8, max ${cpsArr.length}: §2${max.toFixed(2)}cps§8)`
 
-                const info = `§7Combat§8:§cAutoclicker§r §7(x${pdata.autoclicker.count})§r §8(avg ${cpsArr.length}: §2${avg.toFixed(2)}cps§8, max ${cpsArr.length}: §2${max.toFixed(2)}cps§8)`
-
-                if (cfg.autoclicker.actionThresholds.ban && pdata.autoclicker.count > cfg.autoclicker.actionThresholds.ban) {
-                    bancfg[plr.uid] = Date.now() + ccfg.ban.defaultDuration * 1000
+                if (at.ban && c >= at.ban) {
                     kick(plr, {
                         type: 'ban',
                         banDuration: ccfg.ban.defaultDuration,
-                        reason: info
+                        reason: `§7Combat§8/§cAutoclicker§r §7(x${c})§r ${info}`
                     })
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.autoclicker.actionThresholds.kick && pdata.autoclicker.count > cfg.autoclicker.actionThresholds.kick) {
-                    kick(plr, info)
+                if (at.kick && c >= at.kick) {
+                    kick(plr, `§7Combat§8/§cAutoclicker§r §7(x${c})§r ${info}`)
                     vcList.delete(plr)
                     return
                 }
-                if (cfg.autoclicker.actionThresholds.warn && pdata.autoclicker.count > cfg.autoclicker.actionThresholds.warn) {
-                    sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${plr.name}§r has ${info}`)
+                if (at.warn && c >= at.warn) {
+                    warn(plr, undefined, `You have §cAutoclicker§r enabled! §7(x${c})§r ${info}`)
+                }
+                if (at.warn && c >= at.alert) {
+                    alert(`§b${plr.name}§r has §7Combat§8/§cAutoclicker§r! §7(x${c})§r ${info}`)
                 }
             }
         }

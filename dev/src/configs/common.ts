@@ -16,6 +16,7 @@ export type commonSaveData = {
             tolerance: [horizontal: number, vertical: number]
 
             actionThresholds: {
+                alert: number
                 warn: number
                 kick: number
                 ban: number
@@ -26,6 +27,7 @@ export type commonSaveData = {
 
             threshold: number
             actionThresholds: {
+                alert: number
                 warn: number
                 kick: number
                 ban: number
@@ -36,6 +38,7 @@ export type commonSaveData = {
 
             threshold: number
             actionThresholds: {
+                alert: number
                 warn: number
                 kick: number
                 ban: number
