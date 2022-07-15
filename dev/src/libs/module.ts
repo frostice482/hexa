@@ -46,13 +46,13 @@ const aa = pli.internalModules['libs/module'] = async (b) => {
         get toggle() { return this.#cachedToggle }
         set toggle(v) { ( v ? this.enable : this.disable )() }
 
-        readonly enable = (enabler: Player | string = '[System]') => {
+        readonly enable = (enabler: Player | string = '§a[System]§r') => {
             if (this.#cachedToggle == true) return
             this.#cachedToggle = true
             this.#triggerEvent.enable({ enabler })
         }
 
-        readonly disable = (disabler: Player | string = '[System]') => {
+        readonly disable = (disabler: Player | string = '§a[System]§r') => {
             if (this.#cachedToggle == false) return
             this.#cachedToggle = false
             this.#triggerEvent.disable({ disabler })

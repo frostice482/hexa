@@ -51,10 +51,10 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
 
     const alert = (msg: string) => {
         sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r ${msg}`)
-        log.add('warn', '[System]', '[Admins]', msg)
+        log.add('alert', '§a[Admins]§r', '§a[System]§r', msg)
     }
 
-    const warn = (plr: Player, moderator: Player | string = '[System]', msg: string) => {
+    const warn = (plr: Player, moderator: Player | string = '§a[System]§r', msg: string) => {
         plr.sendMsg(`§eYou have been warned §8-§r ${msg}`)
         sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${typeof moderator == 'string' ? moderator : moderator.name}§r §gwarned§r §b${plr.name}§r: ${msg}`)
         log.add('warn', plr, moderator, msg)
@@ -65,7 +65,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             useTemplate = true,
             type = 'kick',
             banDuration = 0,
-            moderator = '[System]',
+            moderator = '§a[System]§r',
             reason = 'N/A',
             announceLevel = 'admin',
             announceMessage = ''
