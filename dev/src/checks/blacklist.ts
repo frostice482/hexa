@@ -6,7 +6,7 @@ import pli from "../pli.js";
 pli.internalModules['checks/blacklist'] = async (b) => {
     const { server, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
     const { world } = await b.import('mc')
-    const blackcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
+    const { config: blackcfg } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
