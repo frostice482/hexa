@@ -64,7 +64,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                     return log([
                         ` `,
                         `Blacklisted players:`,
-                        ...Array.from(blsb.getScores(), ([n, s]) => ` §8:§r ${nameOfUid[n]}§r -> §a${n}`),
+                        ...Array.from(blsb.getScores(), ([n, s]) => ` §8:§r ${nameOfUid[s]}§r -> §a${s}`),
                         ` `,
                     ])
                 }; break

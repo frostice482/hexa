@@ -36,6 +36,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         const timeDefs = {
             s: 1000,
             m: 60000,
+            h: 3600000,
             d: 86400000,
             w: 604800000,
             y: 31536000000
