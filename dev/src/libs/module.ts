@@ -80,7 +80,7 @@ const aa = pli.internalModules['libs/module'] = async (b) => {
         module.ev.disable.subscribe(({disabler}) => {
             const isPlr = typeof disabler !== 'string'
             sendMsgToPlayers(getAdmins(isPlr ? [disabler] : []), `§6[§eHEXA§6]§r Module §a${module.name}§r has been §cdisabled§r by §b${isPlr ? disabler.nickname : disabler}§r.`)
-            if (isPlr) sendMsgToPlayer(disabler, `Module §a${module.name}§r has been §aenabled§r.`)
+            if (isPlr) sendMsgToPlayer(disabler, `Module §a${module.name}§r has been §cdisabled§r.`)
         })
     })
 
