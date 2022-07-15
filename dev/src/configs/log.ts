@@ -40,6 +40,7 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
             d.stringed = data
             logArr.push(d)
         }
+    logArr.sort((a, b) => a.i - b.i)
     
     return class Log {
         static get size() { return logArr.length }
@@ -77,6 +78,8 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
                 endPoint = Math.max(startPoint - count, -1)
             for (let i = startPoint; i > endPoint; i--) yield logArr[i]
         }
+
+        static get arr() { return logArr }
     }
 }
 

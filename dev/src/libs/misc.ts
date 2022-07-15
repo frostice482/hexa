@@ -44,6 +44,15 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         return t
     }
 
+    const binarySearch = <T extends any[]>(arr: T, searchCb: (v: T[number]) => number, startPoint = 0, endPoint = arr.length - 1): T[number] => {
+        if (startPoint == endPoint) return searchCb(arr[startPoint]) == 0 ? arr[startPoint] : undefined
+        const midPoint = ~~( ( startPoint + endPoint ) / 2 ), v = arr[midPoint]
+        const cbv = searchCb(v)
+        return cbv == 0 ? v
+            : cbv > 0 ? binarySearch(arr, searchCb, startPoint, midPoint)
+            : binarySearch(arr, searchCb, midPoint + 1, endPoint)
+    }
+
     // --- kick ---
     ccfg.kick ??= {
         useKickCommand: true
@@ -128,7 +137,8 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         warn,
         kick,
         getAdmins,
-        parseTimeFormat
+        parseTimeFormat,
+        binarySearch
     }
 }
 
