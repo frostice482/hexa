@@ -2,6 +2,8 @@ import './ban.js'
 import './blacklist.js'
 import './kick.js'
 import './warn.js'
+import './modlog.js'
+import './whitelist.js'
 
 import pli from '../pli.js'
 
@@ -10,4 +12,6 @@ pli.internalModules['cc/index'] = async (b) => {
     await b.importInternal('cc/blacklist')
     await b.importInternal('cc/kick')
     await b.importInternal('cc/warn')
+    await b.importInternal('cc/modlog')
+    await b.importInternal('cc/whitelist')
 }

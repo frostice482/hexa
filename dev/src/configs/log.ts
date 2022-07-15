@@ -46,12 +46,7 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
         static get maxSize() { return logCfg.maxSize }
         static set maxSize(v) {
             logCfg.maxSize = v
-            for (let i = 0 ; i < logArr.length - v; i++, logCfg.startPoint++) {
-                const data = logArr.shift()
-                if (!data) continue
-
-                logDataSb.delete(data.stringed)
-            }
+            for (let i = 0 ; i < logArr.length - v; i++, logCfg.startPoint++) logDataSb.delete(logArr.shift().stringed)
         }
 
         static readonly add = (type: string, player: Player | string, moderator: Player | string, message: string, duration = 0) => {
@@ -72,14 +67,15 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
 
             logCfg.endPoint++
             if (logArr.push(data) > logCfg.maxSize) {
-                const data = logArr.shift()
-                if (data) logDataSb.delete(data.stringed)
+                logDataSb.delete(logArr.shift().stringed)
                 logCfg.startPoint++
             }
         }
 
-        static readonly iterate = function*() {
-            for (let i = logArr.length - 1; i >= 0; i--) if (logArr[i]) yield logArr[i]
+        static readonly iterate = function*(count = Infinity, offset = 0) {
+            const startPoint = logArr.length - 1 - offset,
+                endPoint = Math.max(startPoint - count, -1)
+            for (let i = startPoint; i > endPoint; i--) yield logArr[i]
         }
     }
 }

@@ -18,7 +18,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
 
     new cc('hexa:blacklist', {
         minPermLvl: 80,
-        triggers: /^(hexa-?)?blacklist$/i,
+        triggers: /^(hexa-?)?(blacklist|bl)$/i,
         typedArgs: new cc.typedArgs([
             { sequence: [ cc.parser.switch ] },
             { sequence: [ 'list' ] },
@@ -31,9 +31,9 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                     const reason = tArgs.slice(2).join(' ') || 'No reason'
             
                     let c = 0
-                    for (const plr of (tArgs[0] as sel).execute(executer)) {
+                    for (const plr of (tArgs[1] as sel).execute(executer)) {
                         if (permission.getLevel(plr.getTags()) >= 60) {
-                            log(`§b${plr.name}§r is a moderator. You cannot warn them.`)
+                            log(`§b${plr.name}§r is a moderator. You cannot blacklist them.`)
                             continue
                         }
                         if (plr == executer) {
@@ -51,6 +51,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                     if (c == 0) log(`§eNo players have been blacklisted.`)
                     else log(`Blacklisted ${c} player${c == 1 ? '' : 's'}.`)
                 }; break
+                
                 case 'remove': {
                     const puid = uidOfName[tArgs[1]]
                     if (!(puid in blcfg)) return log(`Player §b${tArgs[1]}§r is not blacklisted.`)
@@ -58,6 +59,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                     delete blcfg[puid]
                     return log(`Player §b${tArgs[1]}§r (§a${puid}§r) is no longer blacklisted.`)
                 }; break
+
                 case 'list': {
                     return log([
                         ` `,
@@ -66,13 +68,15 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                         ` `,
                     ])
                 }; break
+
                 case true: {
                     if (module.toggle) return log(`§aBlacklist§r is currently §aenabled§r.`)
                     return module.enable(executer)
                 }
+
                 case false: {
                     if (!module.toggle) return log(`§aBlacklist§r is currently §cdisabled§r.`)
-                    return module.enable(executer)
+                    return module.disable(executer)
                 }
             }
         },
