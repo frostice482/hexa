@@ -14,6 +14,7 @@ export type kickConfig = {
     reason?: string
     announceLevel?: 'none' | 'admin' | 'all'
     announceMessage?: string
+    writeLog?: boolean
 }
 
 const aa = pli.internalModules['libs/misc'] = async (b) => {
@@ -77,8 +78,9 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
             moderator = '§a[System]§r',
             reason = 'N/A',
             announceLevel = 'admin',
-            announceMessage = ''
-        } = typeof messsage == 'string' ? { reason: messsage }
+            announceMessage = '',
+            writeLog = announceLevel != 'none'
+        }: kickConfig = typeof messsage == 'string' ? { reason: messsage }
             : Array.isArray(messsage) ? { useTemplate: false, reason: messsage.join('\n§r') }
             : messsage
 
@@ -99,7 +101,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         }
 
         // write log
-        log.add(type, plr, moderator, reason, banDuration)
+        if (writeLog) log.add(type, plr, moderator, reason, banDuration)
         
         // kick player
         try {
