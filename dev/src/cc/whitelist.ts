@@ -1,6 +1,5 @@
 import cc from "../../types/se/cc.js";
 import { config_whitelist } from "../configs/whitelist.js";
-import { config_id } from "../configs/id.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
@@ -9,7 +8,6 @@ type sel = ReturnType<typeof cc.parser.playerSelector>
 pli.internalModules['cc/whitelist'] = async (b) => {
     const { cc } = await b.import('se')
     const { config: wlcfg, scoreboard: wlsb } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
-    const { nameOfUid, uidOfName } = await b.importInternal('configs/id') as Awaited<config_id>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = Module.get('whitelist')
@@ -37,18 +35,17 @@ pli.internalModules['cc/whitelist'] = async (b) => {
                 }; break
                 
                 case 'remove': {
-                    const puid = uidOfName[tArgs[1]]
-                    if (!(puid in wlcfg)) return log(`Player §b${tArgs[1]}§r is not whitelisted.`)
+                    if (!(tArgs[1] in wlcfg)) return log(`Player §b${tArgs[1]}§r is not whitelisted.`)
 
-                    delete wlcfg[puid]
-                    return log(`Player §b${tArgs[1]}§r (§a${puid}§r) is no longer whitelisted.`)
+                    log(`Player §b${tArgs[1]}§r (§a${wlcfg[tArgs[1]]}§r) is no longer whitelisted.`)
+                    return delete wlcfg[tArgs[1]]
                 }; break
 
                 case 'list': {
                     return log([
                         ` `,
                         `whitelisted players:`,
-                        ...Array.from(wlsb.getScores(), ([n, s]) => ` §8:§r ${nameOfUid[n]}§r -> §a${n}`),
+                        ...Array.from(wlsb.getScores(), ([n, s]) => ` §8:§r ${n}§r -> §a${s}`),
                         ` `,
                     ])
                 }; break
