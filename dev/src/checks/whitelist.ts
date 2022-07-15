@@ -6,7 +6,7 @@ import pli from "../pli.js";
 pli.internalModules['checks/whitelist'] = async (b) => {
     const { server, permission } = await b.import('se')
     const { world } = await b.import('mc')
-    const whitecfg = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
+    const { config: whitecfg } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
