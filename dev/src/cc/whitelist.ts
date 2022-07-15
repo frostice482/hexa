@@ -1,4 +1,5 @@
 import cc from "../../types/se/cc.js";
+import { config_id } from "../configs/id.js";
 import { config_whitelist } from "../configs/whitelist.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
@@ -8,6 +9,7 @@ type sel = ReturnType<typeof cc.parser.playerSelector>
 pli.internalModules['cc/whitelist'] = async (b) => {
     const { cc } = await b.import('se')
     const { config: wlcfg, scoreboard: wlsb } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
+    const { uidOfName } = await b.importInternal('configs/id') as Awaited<config_id>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = Module.get('whitelist')
@@ -21,7 +23,7 @@ pli.internalModules['cc/whitelist'] = async (b) => {
             { sequence: [ 'add', cc.parser.playerSelector ] },
             { sequence: [ 'remove', cc.parser.any ] },
         ]),
-        onTrigger: ({ executer, log, typedArgs: tArgs }) => {
+        onTrigger: ({ executer, log, typedArgs: tArgs, args }) => {
             switch (tArgs[0]) {
                 case 'add': {
                     let c = 0
@@ -30,7 +32,14 @@ pli.internalModules['cc/whitelist'] = async (b) => {
                         wlcfg[plr.name] = plr.uid
                         log(`Whitelisted §b${plr.name}§r.`)
                     }
-                    if (c == 0) log(`§eNo players have been whitelisted.`)
+                    if (c == 0) {
+                        const name = args[1]
+                        const uid = uidOfName[name]
+                        wlcfg[name] = uid ?? -1
+                        log(`Whitelisted §b${name}§r.`)
+                        if (!uid) log(`§eWARNING: You are whitelisting someone that hasn't been registered. Anyone named '${name}' can enter in and be whitelisted.`)
+                        return
+                    }
                     else log(`Whitelisted ${c} player${c == 1 ? '' : 's'}.`)
                 }; break
                 

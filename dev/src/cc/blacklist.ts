@@ -1,6 +1,7 @@
 import cc from "../../types/se/cc.js";
 import { config_blacklist } from "../configs/blacklist.js";
 import { config_id } from "../configs/id.js";
+import { config_log } from "../configs/log.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
@@ -8,10 +9,11 @@ import pli from "../pli.js";
 type sel = ReturnType<typeof cc.parser.playerSelector>
 
 pli.internalModules['cc/blacklist'] = async (b) => {
-    const { cc, permission } = await b.import('se')
+    const { cc, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
     const { config: blcfg, scoreboard: blsb } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const { nameOfUid, uidOfName } = await b.importInternal('configs/id') as Awaited<config_id>
-    const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
+    const mlog = await b.importInternal('configs/log') as Awaited<config_log>
+    const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
     const module = Module.get('blacklist')
@@ -25,7 +27,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
             { sequence: [ 'add', cc.parser.playerSelector ] },
             { sequence: [ 'remove', cc.parser.any ] },
         ]),
-        onTrigger: ({ executer, log, typedArgs: tArgs }) => {
+        onTrigger: ({ executer, log, typedArgs: tArgs, args }) => {
             switch (tArgs[0]) {
                 case 'add': {
                     const reason = tArgs.slice(2).join(' ') || 'No reason'
@@ -48,7 +50,16 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                             reason
                         })
                     }
-                    if (c == 0) log(`§eNo players have been blacklisted.`)
+                    if (c == 0) {
+                        const name = args[1]
+                        const uid = uidOfName[name]
+                        if (!uid) throw new cc.error(`Player not found: ${name}`, 'ReferenceError')
+
+                        blcfg[uid] = uid
+                        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${executer.name}§r §cblacklisted§r §b${name}§r §7(offline)§r from playing in this server§r: ${reason}`)
+                        mlog.add('ban', name, executer, reason)
+                        return log(`Blacklisted §b${name}§r.`)
+                    }
                     else log(`Blacklisted ${c} player${c == 1 ? '' : 's'}.`)
                 }; break
                 

@@ -4,7 +4,7 @@ import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
 pli.internalModules['checks/whitelist'] = async (b) => {
-    const { server, permission } = await b.import('se')
+    const { server, permission, plr: plrC } = await b.import('se')
     const { world } = await b.import('mc')
     const { config: whitecfg } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
@@ -15,6 +15,20 @@ pli.internalModules['checks/whitelist'] = async (b) => {
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
         if ( permission.getLevel(plr.getTags()) >= 60 || whitecfg[plr.name] == plr.uid ) return
+
+        if (whitecfg[plr.name] == -1) {
+            if (plr.uid != -1) return whitecfg[plr.name] = plr.uid
+            const aa = plrC.ev.playerRegister.subscribe((nplr) => {
+                if (nplr != plr) return
+                ab()
+                whitecfg[plr.name] = plr.uid
+            })
+            const ab = b.ev.unload.subscribe(() => {
+                plrC.ev.playerRegister.unsubscribe(aa)
+                b.ev.unload.unsubscribe(ab)
+            })
+            return
+        }
 
         kick(plr, {
             useTemplate: false,
