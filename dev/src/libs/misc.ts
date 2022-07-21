@@ -92,7 +92,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
         // kick message
         const kickType = type == 'blacklist' ? '§4blacklisted§r' : type == 'ban' ? '§cbanned§r' : '§ekicked§r', 
             modName = typeof moderator == 'string' ? moderator : moderator.name,
-            aa = `from${ type != 'kick' ? ' playing in ' : ' ' }this server${ type == 'ban' ? ` for §a${convertToReadableTime(banDuration, false)}§r` : '' }`
+            aa = `from${ type != 'kick' ? ' playing in ' : ' ' }this server${ type == 'ban' ? ` for §a${convertToReadableTime(banDuration, false)}§r and will expire on §a${ new Date(Date.now() + banDuration * 1000) }§r` : '' }`
         
         // kick announce
         if (announceLevel != 'none') {
