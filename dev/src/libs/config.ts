@@ -30,7 +30,8 @@ const aa = pli.internalModules['libs/config'] = () => {
             obj[config.scoreboard] = dummies
 
             return new Proxy(obj, {
-                get: (t, p) => typeof p == 'symbol' ? undefined : dummies.get('§r' + p),
+                //@ts-expect-error
+                get: (t, p) => typeof p == 'symbol' ? obj[p] : dummies.get('§r' + p),
                 set: (t, p, v) => {
                     if (typeof p == 'symbol') return true
                     dummies.set('§r' + p, ~~+v)
