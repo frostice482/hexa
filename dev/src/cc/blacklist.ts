@@ -58,7 +58,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                         if (!uid) throw new cc.error(`Player not found: ${name}`, 'ReferenceError')
 
                         blcfg[uid] = uid
-                        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${executer.name}§r §4blacklisted§r §b${name}§r §7(offline)§r from playing in this server§r: ${reason}`)
+                        sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${executer.name}§r §4blacklisted§r §b${name}§r §7(offline)§r (§a${uid}§r) from playing in this server§r: ${reason}`)
                         mlog.add('ban', name, executer, reason)
                         return log(`Blacklisted §b${name}§r.`)
                     }

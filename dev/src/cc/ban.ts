@@ -49,7 +49,7 @@ pli.internalModules['cc/ban'] = async (b) => {
                 if (!uid) throw new cc.error(`Player not found: ${name}`, 'ReferenceError')
 
                 bancfg[uid] = Date.now() + duration * 1000
-                sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${executer.name}§r §cbanned§r §b${name}§r §7(offline)§r from playing in this server for §a${convertToReadableTime(duration, false)}§r: ${reason}`)
+                sendMsgToPlayers(getAdmins(), `§6[§eHEXA§6]§r §b${executer.name}§r §cbanned§r §b${name}§r §7(offline)§r (§a${uid}§r) from playing in this server for §a${convertToReadableTime(duration, false)}§r: ${reason}`)
                 mlog.add('ban', name, executer, reason, duration)
                 return log(`Banned §b${name}§r.`)
             }

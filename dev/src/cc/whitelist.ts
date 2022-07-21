@@ -38,7 +38,7 @@ pli.internalModules['cc/whitelist'] = async (b) => {
                         const name = args[1]
                         const uid = uidOfName[name]
                         wlcfg[name] = uid ?? -1
-                        log(`Whitelisted §b${name}§r.`)
+                        log(`Whitelisted §b${name}§r (§a${uid ?? '§7<uid unknown>'}§r).`)
                         if (!uid) log(`§eWARNING: You are whitelisting someone that hasn't been registered. Anyone named '${name}' can enter in and be whitelisted.`)
                         return
                     }
