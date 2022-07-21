@@ -1,6 +1,7 @@
 import cc from "../../types/se/cc.js";
 import { config_id } from "../configs/id.js";
 import { config_whitelist } from "../configs/whitelist.js";
+import { libs_config } from "../libs/config.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
 
@@ -8,7 +9,8 @@ type sel = ReturnType<typeof cc.parser.playerSelector>
 
 pli.internalModules['cc/whitelist'] = async (b) => {
     const { cc } = await b.import('se')
-    const { config: wlcfg, scoreboard: wlsb } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
+    const wlcfg = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
+    const config = await b.importInternal('libs/config') as libs_config
     const { uidOfName } = await b.importInternal('configs/id') as Awaited<config_id>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
@@ -54,7 +56,7 @@ pli.internalModules['cc/whitelist'] = async (b) => {
                     return log([
                         ` `,
                         `whitelisted players:`,
-                        ...Array.from(wlsb.getScores(), ([n, s]) => ` §8:§r ${n}§r -> §a${s}`),
+                        ...Array.from(wlcfg[config.scoreboard].getScores(), ([n, s]) => ` §8:§r ${n}§r -> §a${s}`),
                         ` `,
                     ])
                 }; break

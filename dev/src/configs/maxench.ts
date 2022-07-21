@@ -7,7 +7,7 @@ const aa = pli.internalModules['configs/maxench'] = async (b) => {
 
     const saveId = `HX:ME:${storage.instance.default.uniqueID.slice(0, 10)}`
     const maxEnchantLevels = !scoreboard.objective.exist(saveId)
-        ? Object.assign(config(scoreboard.objective.create(saveId).dummies), {
+        ? Object.assign(config.cache(scoreboard.objective.create(saveId).dummies), {
             protection: 4,
             fireProtection: 4,
             featherFalling: 4,
@@ -47,7 +47,7 @@ const aa = pli.internalModules['configs/maxench'] = async (b) => {
             soulSpeed: 3,
             swiftSneak: 3,
         })
-        : config(scoreboard.objective.edit(saveId).dummies)
+        : config.cache(scoreboard.objective.edit(saveId).dummies)
     
     const compatibleEnchantments = (list: string[] = []): Record<string, number> => {
         const o = Object.create(null)

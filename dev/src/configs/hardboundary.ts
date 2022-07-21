@@ -10,7 +10,7 @@ const aa = pli.internalModules['configs/hardboundary'] = async (b) => {
 
     const saveId = `HX:HB:${storage.instance.default.uniqueID.slice(0, 10)}`
     const hardBoundary = !scoreboard.objective.exist(saveId)
-        ? Object.assign(config(scoreboard.objective.create(saveId).dummies), {
+        ? Object.assign(config.nocache(scoreboard.objective.create(saveId).dummies), {
             x1: ~maxHorizontalBoundary,
             y1: -105,
             z1: ~maxHorizontalBoundary,
@@ -18,7 +18,7 @@ const aa = pli.internalModules['configs/hardboundary'] = async (b) => {
             y2: maxVerticalBoundary,
             z2: maxHorizontalBoundary,
         })
-        : config(scoreboard.objective.edit(saveId).dummies)
+        : config.nocache(scoreboard.objective.edit(saveId).dummies)
     
     return new (class HardBoundary extends Area {
         readonly update = () => {

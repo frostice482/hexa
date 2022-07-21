@@ -7,7 +7,7 @@ const aa = pli.internalModules['configs/maxstack'] = async (b) => {
 
     const saveId = `HX:MS:${storage.instance.default.uniqueID.slice(0, 10)}`
     const maxStacks = !scoreboard.objective.exist(saveId)
-        ? Object.assign(config(scoreboard.objective.create(saveId).dummies), {
+        ? Object.assign(config.cache(scoreboard.objective.create(saveId).dummies), {
             '': 0,
             'minecraft:apple': 64,
             'minecraft:golden_apple': 64,
@@ -1141,7 +1141,7 @@ const aa = pli.internalModules['configs/maxstack'] = async (b) => {
             'minecraft:stripped_mangrove_log': 64,
             'minecraft:gravel': 64
         })
-        : config(scoreboard.objective.edit(saveId).dummies)
+        : config.cache(scoreboard.objective.edit(saveId).dummies)
     
     return maxStacks
 }

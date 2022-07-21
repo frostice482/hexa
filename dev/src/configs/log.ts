@@ -22,13 +22,13 @@ const aa = pli.internalModules['configs/log'] = async (b) => {
 
     const logCfgId = `HX:LC:${storage.instance.default.uniqueID.slice(0, 10)}`
     const logCfg = !scoreboard.objective.exist(logCfgId)
-        ? Object.assign(config(scoreboard.objective.create(logCfgId).dummies), {
+        ? Object.assign(config.nocache(scoreboard.objective.create(logCfgId).dummies), {
             startPoint: 1,
             endPoint: 1,
             maxSize: 100,
             currentIndex: 1
         })
-        : config(scoreboard.objective.edit(logCfgId).dummies)
+        : config.nocache(scoreboard.objective.edit(logCfgId).dummies)
     
     const logDataId = `HX:LD:${storage.instance.default.uniqueID.slice(0, 10)}`
     const logDataSb = scoreboard.objective.for(logDataId).dummies

@@ -7,7 +7,7 @@ const aa = pli.internalModules['configs/id'] = async (b) => {
     const config = await b.importInternal('libs/config') as libs_config
 
     const cfg = new Proxy(
-        config( scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies ), {
+        config.cache( scoreboard.objective.for(`HX:ID:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies ), {
             set: (t, p, v) => {
                 if (typeof p == 'symbol') return true
                 delete cfg2[t[p]]

@@ -6,7 +6,7 @@ import pli from "../pli.js";
 pli.internalModules['checks/whitelist'] = async (b) => {
     const { server, permission, plr: plrC } = await b.import('se')
     const { world } = await b.import('mc')
-    const { config: whitecfg } = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
+    const wcfg = await b.importInternal('configs/whitelist') as Awaited<config_whitelist>
     const { kick } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
@@ -14,14 +14,14 @@ pli.internalModules['checks/whitelist'] = async (b) => {
 
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
-        if ( permission.getLevel(plr.getTags()) >= 60 || ( whitecfg[plr.name] != -1 && whitecfg[plr.name] == plr.uid ) ) return
+        if ( permission.getLevel(plr.getTags()) >= 60 || ( wcfg[plr.name] != -1 && wcfg[plr.name] == plr.uid ) ) return
 
-        if (whitecfg[plr.name] == -1) {
-            if (plr.uid != -1) return whitecfg[plr.name] = plr.uid
+        if (wcfg[plr.name] == -1) {
+            if (plr.uid != -1) return wcfg[plr.name] = plr.uid
             const aa = plrC.ev.playerRegister.subscribe((nplr) => {
                 if (nplr != plr) return
                 ab()
-                whitecfg[plr.name] = plr.uid
+                wcfg[plr.name] = plr.uid
             })
             const ab = b.ev.unload.subscribe(() => {
                 plrC.ev.playerRegister.unsubscribe(aa)
@@ -44,7 +44,7 @@ pli.internalModules['checks/whitelist'] = async (b) => {
         server.ev.playerJoin.subscribe(aa)
 
         for (const plr of world.getPlayers()) {
-            if (permission.getLevel(plr.getTags()) >= 60 || whitecfg[plr.name] == plr.uid) continue
+            if (permission.getLevel(plr.getTags()) >= 60 || wcfg[plr.name] == plr.uid) continue
             kick(plr, {
                 type: 'kick',
                 announceLevel: 'none',

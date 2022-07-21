@@ -7,7 +7,7 @@ const aa = pli.internalModules['configs/renewable'] = async (b) => {
 
     const saveId = `HX:RN:${storage.instance.default.uniqueID.slice(0, 10)}`
     const maxStacks = !scoreboard.objective.exist(saveId)
-        ? Object.assign(config(scoreboard.objective.create(saveId).dummies), {
+        ? Object.assign(config.cache(scoreboard.objective.create(saveId).dummies), {
             'minecraft:composter': 0,
             'minecraft:campfire': 0,
             'minecraft:soul_campfire': 0,
@@ -20,7 +20,7 @@ const aa = pli.internalModules['configs/renewable'] = async (b) => {
             'minecraft:dropper': 0,
             'minecraft:dispenser': 0
         })
-        : config(scoreboard.objective.edit(saveId).dummies)
+        : config.cache(scoreboard.objective.edit(saveId).dummies)
     
     return maxStacks
 }

@@ -22,7 +22,7 @@ const aa = pli.internalModules['libs/misc'] = async (b) => {
     const { permission, execCmd, misc: { convertToReadableTime }, sendChat: { sendMsgToPlayers, sendMsg } } = await b.import('se')
     const log = await b.importInternal('configs/log') as Awaited<config_log>
     const bancfg = await b.importInternal('configs/banlist') as Awaited<config_banlist>
-    const { config: blcfg } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
+    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const ccfg = await b.importInternal('configs/common') as Awaited<config_common>
 
     const getAdmins = function* (excludeAdmins: Player[] = [], minLevel = 60) {

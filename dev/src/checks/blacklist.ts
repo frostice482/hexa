@@ -6,7 +6,7 @@ import pli from "../pli.js";
 pli.internalModules['checks/blacklist'] = async (b) => {
     const { server, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
     const { world } = await b.import('mc')
-    const { config: blackcfg } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
+    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
@@ -15,13 +15,13 @@ pli.internalModules['checks/blacklist'] = async (b) => {
     // test event listeners
     const aa = server.ev.playerJoin.subscribe((plr, ctrl) => {
         if ( permission.getLevel(plr.getTags()) >= 60 ) {
-            if (plr.uid in blackcfg) {
+            if (plr.uid in blcfg) {
                 sendMsgToPlayers(getAdmins([plr]), `§6[§eHEXA§6]§r Removed §b${plr.name}§r from blacklist: this player is an admin`)
-                delete blackcfg[plr.uid]
+                delete blcfg[plr.uid]
             }
             return
         }
-        if (plr.uid == -1 || !( plr.uid in blackcfg )) return
+        if (plr.uid == -1 || !( plr.uid in blcfg )) return
 
         kick(plr, {
             useTemplate: false,
@@ -37,7 +37,7 @@ pli.internalModules['checks/blacklist'] = async (b) => {
         server.ev.playerJoin.subscribe(aa)
 
         for (const plr of world.getPlayers()) {
-            if (permission.getLevel(plr.getTags()) >= 60 || !( plr.uid in blackcfg)) continue
+            if (permission.getLevel(plr.getTags()) >= 60 || !( plr.uid in blcfg)) continue
             kick(plr, {
                 type: 'kick',
                 announceLevel: 'none',

@@ -2,6 +2,7 @@ import cc from "../../types/se/cc.js";
 import { config_blacklist } from "../configs/blacklist.js";
 import { config_id } from "../configs/id.js";
 import { config_log } from "../configs/log.js";
+import { libs_config } from "../libs/config.js";
 import { libs_misc } from "../libs/misc.js";
 import { libs_module } from "../libs/module.js";
 import pli from "../pli.js";
@@ -10,9 +11,10 @@ type sel = ReturnType<typeof cc.parser.playerSelector>
 
 pli.internalModules['cc/blacklist'] = async (b) => {
     const { cc, permission, sendChat: { sendMsgToPlayers } } = await b.import('se')
-    const { config: blcfg, scoreboard: blsb } = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
+    const blcfg = await b.importInternal('configs/blacklist') as Awaited<config_blacklist>
     const { nameOfUid, uidOfName } = await b.importInternal('configs/id') as Awaited<config_id>
     const mlog = await b.importInternal('configs/log') as Awaited<config_log>
+    const config = await b.importInternal('libs/config') as libs_config
     const { kick, getAdmins } = await b.importInternal('libs/misc') as Awaited<libs_misc>
 
     const Module = await b.importInternal('libs/module') as Awaited<libs_module>
@@ -75,7 +77,7 @@ pli.internalModules['cc/blacklist'] = async (b) => {
                     return log([
                         ` `,
                         `Blacklisted players:`,
-                        ...Array.from(blsb.getScores(), ([n, s]) => ` §8:§r ${nameOfUid[s]}§r -> §a${s}`),
+                        ...Array.from(blcfg[config.scoreboard].getScores(), ([n, s]) => ` §8:§r ${nameOfUid[s]}§r -> §a${s}`),
                         ` `,
                     ])
                 }; break

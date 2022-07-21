@@ -1,4 +1,4 @@
-import { libs_config } from "../libs/config.js";
+import { configObj, libs_config } from "../libs/config.js";
 import pli from "../pli.js";
 
 const aa = pli.internalModules['configs/blacklist'] = async (b) => {
@@ -7,10 +7,7 @@ const aa = pli.internalModules['configs/blacklist'] = async (b) => {
 
     const sb = scoreboard.objective.for(`HX:BK:${storage.instance.default.uniqueID.slice(0, 10)}`).dummies
 
-    return {
-        scoreboard: sb,
-        config: config.nocache(sb) as Record<number, number>
-    }
+    return config.nocache(sb) as configObj<number>
 }
 
 export type config_blacklist = ReturnType<typeof aa>
